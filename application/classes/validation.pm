@@ -4,14 +4,16 @@
     use utf8;
   
     public data => my %data;
+    public lang => my %lang;
   
     sub new {
-        my($class, $data) = @_;
+        my($class, $data, $lang) = @_;
         my $self = bless {}, $class;
         
         register($self); 
             
         $self->data($data);
+	$self->lang($lang);
         
         return $self;
     }
@@ -25,8 +27,8 @@
         @user_info{@$sign_fields} = @user_values;
 	
 	my @messages;
-	push @messages, 'Заполнены не все поля' if grep /^$/, values %user_info;
-        push @messages, 'Пароли не совпадают' if defined $user_info{confim_password} && ($user_info{confim_password} ne $user_info{password});
+	push @messages, $self->lang->EMPTY_FORM_FIELDS_EXISTS_MESSAGE if grep /^$/, values %user_info;
+        push @messages, $self->lang->PASS_CONFIRM_ERROR_MESSAGE if defined $user_info{confim_password} && ($user_info{confim_password} ne $user_info{password});
 
         delete($user_info{confim_password});
 	
@@ -55,7 +57,7 @@
         @product_info{@sign_fields} = @product_values;
 	
 	my @messages;
-	push @messages, 'Заполнены не все поля' if grep /^$/, values %product_info;
+	push @messages, $self->lang->EMPTY_FORM_FIELDS_EXISTS_MESSAGE if grep /^$/, values %product_info;
 	
 	return (@messages) ? \@messages : \%product_info;
     }

@@ -18,15 +18,10 @@
     my $auth = auth->new($self->cookies(), $self->database_handler()); 
     my $user_id = $auth->logged_user_id();
     
-    my $user = model_users->new($self->database_handler())->get_user_on_id($user_id);
-    
-    my $title = ($user_id) ? "Вы залогинены, " . $user->{name} : 'PenSpinStore';
+    my $user = model_users->new($self->database_handler(), $self->lang())->get_user_on_id($user_id);
+
     $self->add_template_params({
-        site_name => $title,
-        page_title => 'Главная страница',
-        center_block => [
-            '<p>Добро пожаловать в наш магазин.</p>',
-        ]
+        page_title => $self->lang->INDEX_MAIN_PAGE_TITLE,
     });
   }
 }

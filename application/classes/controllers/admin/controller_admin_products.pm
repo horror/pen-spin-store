@@ -1,7 +1,6 @@
 package controller_admin_products; {
     use base controller_base_admin;
     use folder_config;
-    use validation;
     use products_importer;
     use strict;
     use utf8;
@@ -17,11 +16,11 @@ package controller_admin_products; {
         $widget_menu->set_items([
             {
                 uri => sprintf($uri_pattern, 'products', 'show'),
-                caption => 'Товары',
+                caption => $self->lang->PRODUCTS_MENU_ITEM,
             },
             {
                 uri => sprintf($uri_pattern, 'products', 'import'),
-                caption => 'Импорт',
+                caption => $self->lang->IMPORT_MENU_ITEM,
             },
         ]);
 	
@@ -39,7 +38,7 @@ package controller_admin_products; {
 	]);
         
         $self->add_template_params({
-            page_title => 'Товары и категории',
+            page_title => $self->lang->PRODUCTS_PAGE_TITLE,
             center_block => [
                 fw_view->new('common', 'products_show.tpl')->execute()
             ]
@@ -54,7 +53,7 @@ package controller_admin_products; {
 	}
 	
         $self->add_template_params({
-            page_title => 'Импорт товаров и категорий',
+            page_title => $self->lang->IMPORT_PAGE_TITLE,
             center_block => [
                 fw_view->new('admin', 'products_import.tpl')->execute()
             ]

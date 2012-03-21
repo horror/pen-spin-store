@@ -12,10 +12,10 @@
   
     sub action_stats {
 	my $self = shift;
-	my @stats = model_stats->new($self->database_handler())->get_stats();
+	my @stats = model_stats->new($self->database_handler(), $self->lang())->get_stats();
 	
 	$self->add_template_params({
-	    page_title => 'Статистика',
+	    page_title => $self->lang->ADMIN_STATS_PAGE_TITLE,
 	    center_block => [
 		fw_view->new('admin', 'main_stat.tpl', {
 		    stats => @stats

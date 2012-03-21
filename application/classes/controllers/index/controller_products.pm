@@ -1,7 +1,6 @@
 package controller_products; {
     use base controller_base_index;
     use folder_config;
-    use validation;
     use strict;
     use utf8;
   
@@ -20,7 +19,7 @@ package controller_products; {
 	]);
         
         $self->add_template_params({
-            page_title => 'Товары и категории',
+            page_title => $self->lang->PRODUCTS_PAGE_TITLE,
             center_block => [
                 fw_view->new('common', 'products_show.tpl')->execute()
             ]

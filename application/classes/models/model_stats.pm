@@ -3,9 +3,9 @@
   use utf8;
   
   sub new {
-    my($class, $dbh) = @_;
+    my($class, $dbh, $lang) = @_;
     
-    my $self = fw_model::new($class, $dbh);
+    my $self = fw_model::new($class, $dbh, $lang);
         
     return $self;
   }
@@ -15,7 +15,7 @@
 
     return [
         [
-	    'Пользователи',
+	    $self->lang->USERS_TABLE_ALIAS,
 	    $self->fw_database_handler->select_num_rows('users', '*'),
         ]
     ];

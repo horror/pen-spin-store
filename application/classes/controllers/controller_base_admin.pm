@@ -18,21 +18,20 @@ package controller_base_admin; {
         $widget_menu->set_items([
             {
                 uri => sprintf($uri_pattern, 'main', 'stats'),
-                caption => 'Статистика',
+                caption => $self->lang->STATS_MENU_ITEM,
             },
             {
                 uri => sprintf($uri_pattern, 'users', 'show'),
-                caption => 'Пользователи',
+                caption => $self->lang->USERS_MENU_ITEM,
             },
             {
                 uri => sprintf($uri_pattern, 'products', 'show'),
-                caption => 'Товары и категории',
+                caption => $self->lang->PRODUCTS_MENU_ITEM,
             },
         ]);
     
         $self->template_settings('admin', 'base_admin.tpl', {
-            site_name => 'PenSpinStore - Админка',
-            page_title => 'Главная страница',
+            site_name => $self->lang->ADMIN_TITLE,
             main_menu => $widget_menu->execute(),
         }, [
             APP_CSS_PATH . __DM . 'style.css',    

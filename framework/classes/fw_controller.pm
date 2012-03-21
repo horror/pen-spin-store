@@ -6,10 +6,12 @@
     use folder_config;
     use CGI qw(header cookie redirect);
     use strict;
+    use russian;
     use utf8;
     
     
     public database_handler => my %database_handler;
+    public lang => my %lang;
     public request => my %request;
     public cookies => my %cookies;
     public template_name => my %template_name;
@@ -39,7 +41,7 @@
         }
             
         $self->database_handler($dbh);
-            
+        $self->lang(russian->new());
         return $self;
     }
     

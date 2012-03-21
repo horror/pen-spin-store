@@ -8,7 +8,7 @@ package fw_database; {
     use utf8;
     
     public database_handler => my %database_handler;
-    public sql_gen_handler => my %sql_gen_handler ;
+    public sql_gen_handler => my %sql_gen_handler;
     
     sub new {
         my($class, $dbh) = @_;

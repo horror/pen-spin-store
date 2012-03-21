@@ -5,9 +5,9 @@ package model_users; {
     use utf8;
     
     sub new {
-        my($class, $dbh) = @_;
+        my($class, $dbh, $lang) = @_;
         
-        my $self = fw_model::new($class, $dbh);
+        my $self = fw_model::new($class, $dbh, $lang);
             
         return $self;
     }
@@ -53,7 +53,9 @@ package model_users; {
 		);
         
         foreach (@$result) {
-	    $_->{cell}->[-1] = ($_->{cell}->[-1]) ? 'Админ' : 'Пользователь'; 
+	    $_->{cell}->[-1] = ($_->{cell}->[-1]) ?
+               $self->lang->SELECT_ADMIN_ROLE :
+               $self->lang->SELECT_USER_ROLE; 
 	}
         
         return $result;

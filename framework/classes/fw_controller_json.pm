@@ -5,11 +5,13 @@
     use config_database;
     use folder_config;
     use CGI qw(header cookie redirect);
+    use russian;
     use strict;
     use utf8;
     
     
     public database_handler => my %database_handler;
+    public lang => my %lang;
     public request => my %request;
     public cookies => my %cookies;
     public data => my %data;
@@ -32,7 +34,8 @@
         $dbh->{'mysql_enable_utf8'} = 1;
         
         $self->database_handler($dbh);
-            
+        $self->lang(russian->new());
+        
         $self->data({});
             
         return $self;

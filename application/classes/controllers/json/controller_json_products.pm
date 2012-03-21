@@ -42,21 +42,21 @@
 	        push @{$filters->{"-$filters_cond"}}, {$key => $filter->{$key}};
 	    }
 	    
-	    $self->data->{rows} = model_products->new($self->database_handler())
+	    $self->data->{rows} = model_products->new($self->database_handler(), $self->lang())
 		->get_products(
 		    $filters, { "-$sord" => $sidx }, $limit, $start
 		);
 		
-	    $count = model_products->new($self->database_handler())
+	    $count = model_products->new($self->database_handler(), $self->lang())
 		->get_products_cnt($filters);
 	}
 	else {
-	    $self->data->{rows} = model_products->new($self->database_handler())
+	    $self->data->{rows} = model_products->new($self->database_handler(), $self->lang())
 		->get_products_by_category_id(
 		    $self->request->{'cat_id'}, $sord, $sidx, $limit, $start
 		);
 		
-	    $count = model_products->new($self->database_handler())
+	    $count = model_products->new($self->database_handler(), $self->lang())
 	        ->get_products_cnt_by_category_id($self->request->{'cat_id'});
 	}
 	
@@ -72,26 +72,29 @@
     sub action_add {
         my $self = shift;
 	
-	my $product_info = validation->new($self->request())->validate_product_form();   
+	my $product_info = validation->new($self->request(), $self->lang())
+	    ->validate_product_form();   
         $product_info = {} unless ref $product_info eq "HASH";
 	
-	model_products->new($self->database_handler())->add_product($product_info, $self->request->{'cat_id'});
+	model_products->new($self->database_handler(), $self->lang())
+	    ->add_product($product_info, $self->request->{'cat_id'});
     }
     
     sub action_edit {
         my $self = shift;
 	
-	my $product_info = validation->new($self->request())->validate_product_form();          
+	my $product_info = validation->new($self->request(), $self->lang())
+	    ->validate_product_form();          
         $product_info = {} unless ref $product_info eq "HASH";
 	
-	model_products->new($self->database_handler())
+	model_products->new($self->database_handler(), $self->lang())
 	    ->edit_product($product_info, $self->request->{'id'});
     }
     
     sub action_delete {
         my $self = shift;
 	
-	model_products->new($self->database_handler())
+	model_products->new($self->database_handler(), $self->lang())
 	    ->delete_product($self->request->{'id'});
     }
 }

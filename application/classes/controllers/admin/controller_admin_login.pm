@@ -20,13 +20,13 @@
 		$self->redirection('admin_main', 'stats');
 	    }
 	    else {
-	        $message = 'Логин и пароль введены не верно';
+	        $message = $self->lang->LOGIN_ERROR_MESSAGE;
 	    }
         }
 	
 	$self->add_template_params({
 	    main_menu => '',                            #пока залепил
-	    page_title => 'Вход в админ. панель',
+	    page_title => $self->lang->ADMIN_LOGIN_PAGE_TITLE,
 	    center_block => [
 		fw_view->new('admin', 'login_index.tpl', {
 		    message => $message,

@@ -1,8 +1,6 @@
 ﻿package controller_admin_users; {
     use base controller_base_admin;
-    use model_users;
     use folder_config;
-    use validation;
     use strict;
     use utf8;
   
@@ -18,7 +16,7 @@
         $self->add_template_scripts([APP_JS_PATH . __DM . 'users_grid.js']);
         
         $self->add_template_params({
-            page_title => 'Пользователи',
+            page_title => $self->lang->USERS_PAGE_TITLE,
             center_block => [
                 fw_view->new('admin', 'users_show.tpl')->execute()
             ]

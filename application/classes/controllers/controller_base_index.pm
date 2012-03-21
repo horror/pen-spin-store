@@ -21,20 +21,20 @@
     $widget_menu->set_items([
         {
             uri => sprintf($uri_pattern, 'main', 'index'),
-            caption => 'Главная',
+            caption => $self->lang->MAIN_MENU_ITEM,
         },
         {
             uri => sprintf($uri_pattern, 'products', 'show'),
-            caption => 'Каталог',
+            caption => $self->lang->PRODUCTS_MENU_ITEM,
         },
     ]);
     
     
     $self->template_settings('index', 'base_index.tpl', {
-        site_name => 'PenSpinStore',
+        site_name => $self->lang->INDEX_TITLE,
         main_menu => $widget_menu->execute(),
-        site_description => 'магазин ручек для пен спиннинга',
-        c_rights => 'все права защищены (с) 2012',
+        site_description => $self->lang->INDEX_DESCR,
+        c_rights => $self->lang->COPY_RIGHTS,
         login_form => ((!$auth->logged_user_id()) ? $widget_login->execute() : '')
     }, [
         APP_CSS_PATH . __DM . 'style.css', 

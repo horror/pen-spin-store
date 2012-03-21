@@ -18,31 +18,30 @@
     my $self = shift;
     my @messages;
     if ($self->request->{submit}) {
-	my $result = validation->new($self->request())->validate_registration_user_form();
+	my $result = validation->new($self->request(), $self->lang())->validate_registration_user_form();
 	
 	if (ref $result eq "HASH") {
-	    model_users->new($self->database_handler())->add_user($result);
+	    model_users->new($self->database_handler(), $self->lang())->add_user($result);
 	    mailer->new($self->request->{email},
-	        'Вы зарегистрировались на сайте Localhost',
-		sprintf("%s! Поздравляем вас с успешной регистрацией на ".
-		    "нашем сайте.\n Ваш логин: %s.\n Пароль: %s",
+	        $self->lang->REG_MAIL_HEADER,
+		sprintf($self->lang->REG_MAIL_TEXT_FORMAT,
 		    $self->request->{name},
 		    $self->request->{login},
 		    $self->request->{password}
 		)
 	    )->send_mail();
-	    push @messages, 'Вы успешно зарегистрировались';
+	    push @messages, REG_SUCCESS_MESSAGE;
 	}
 	else {
 	    @messages = @$result;
 	}
     }
     $self->add_template_params({
-        page_title => 'Регистрация',
+        page_title => $self->lang->INDEX_REG_PAGE_TITLE,
 	center_block => [
 	    fw_view->new('common', 'user_form.tpl', {
 		messages => \@messages,
-                submit_caption => 'Зарегистрироваться',
+                submit_caption => $self->lang->SUBMIT_REG_CAPTION,
 	    })->execute()
 	]
     });
