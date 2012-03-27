@@ -24,6 +24,8 @@ function gen_table() {
 		});
 		
 		$('#products_grid').trigger('reloadGrid',[{page:1}]);
+		
+		$('#category_id').val(id);
 	     }
       });
       jQuery("#category_tree").jqGrid('navGrid',"#pager_tree");

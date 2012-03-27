@@ -49,7 +49,7 @@ package model_users; {
         my @rows = qw[id name login email password role];
         
         $result = $self->fw_database_handler->select_and_fetchall_array_for_jsGrid(
-		    'users', @rows, {}, $order, $limit, $start
+		    'users', \@rows, {}, $order, $limit, $start
 		);
         
         foreach (@$result) {

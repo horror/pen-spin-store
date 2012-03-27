@@ -13,6 +13,7 @@ use CGI::Cookie;
 
 my $q = CGI->new;
 my %_params = $q->Vars;
+my @_files = $q->upload('multiple_files');
 my %_cookies = CGI::Cookie->fetch;
 
 my $controller_name = 'controller_'
@@ -23,7 +24,7 @@ my $controller_name = 'controller_'
 my $action = $q->url_param('action') ? $q->url_param('action') : DEFAULT_ROUTE_ACTION;
 
 require "$controller_name.pm";
-my $controller = $controller_name->new(\%_params, \%_cookies);
+my $controller = $controller_name->new(\%_params, \%_cookies, \@_files);
 #eval '$controller->action_' . $action . '()';
 {no warnings 'once';
 "${controller_name}::action_$action"->($controller);}

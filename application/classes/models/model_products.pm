@@ -83,7 +83,14 @@ package model_products; {
         return \@result;
     }
     
-    sub add_product {
+    sub get_product_info_by_id {
+        my($self, $product_id) = @_;
+        
+        return $self->fw_database_handler->select_and_fetchrow_hashref(
+                'products', 'id', '*', {id => $product_id});
+    }
+    
+    sub add_product_and_get_id {
         my($self, $fields, $category_id, $path) = @_;
         if(!defined $path) {
             $path = $self->get_path_by_category_id($category_id); 
@@ -92,10 +99,38 @@ package model_products; {
         $fields->{category_id} = $category_id;
         
         $self->fw_database_handler->insert('products', $fields);
+        
+        return $self->fw_database_handler->last_inserted_id('products');
+    }
+    
+    sub get_product_images_by_id {
+        my($self, $product_id) = @_;
+        my $result = $self->
+            fw_database_handler->select_and_fetchall_arrayhashesref(
+                'product_images', ['name'], {product_id => $product_id});
+        my @arr = map $_->{name}, @$result;
+            
+        return \@arr;
+        
+    }
+    
+    sub add_product_images_by_id {
+        my($self, $product_id, $images) = @_;
+        my $fields = {};
+        for my $img (@$images) {
+            $fields = {product_id => $product_id, name => $img};
+            $self->fw_database_handler->insert('product_images', $fields);
+        }
+    }
+    
+    sub delete_product_images_by_id {
+        my($self, $product_id) = @_;
+        $self->fw_database_handler->delete('product_images', {product_id => $product_id});
     }
     
     sub edit_product {
         my($self, $fields, $product_id) = @_;
+        delete $fields->{image} if $fields->{image} eq '';
         $self->fw_database_handler->update('products', $fields, { id => $product_id });
     }
     

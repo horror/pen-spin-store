@@ -4,7 +4,7 @@ package widget_horz_menu; {
     
     sub new {
 	my ($class, $args, $cookies, $dbh) = @_;
-	my $self = fw_controller::new($class, $args, $cookies, $dbh);
+	my $self = fw_controller::new($class, $args, $cookies, {}, $dbh);
 	$self->template_settings('widgets', 'widget_horz_menu.tpl');
 	return $self;
     }

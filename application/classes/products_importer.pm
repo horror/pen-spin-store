@@ -57,7 +57,7 @@ package products_importer; {
     sub parse_products {
 	my($self, $page, $par_cat_name, $cat_id, $cat_path) = @_;
 	
-	while ($page =~ m#<tr class="productListing-(?:odd|even)">.*?<img src="images/(.*?)".*?<a.*?products_id=.*?>(.*?)</a>.*?<td.*?>(?:&nbsp;|)\$(.*?)(?:&nbsp;|)</td>#igs) {
+	while ($page =~ m#<tr class="productListing-(?:odd|even)">.*?(:?<img src="images/(.*?)")?.*?<a.*?products_id=.*?>(.*?)</a>.*?<td.*?>(?:&nbsp;|)\$(.*?)(?:&nbsp;|)</td>#igs) {
 	    model_products->new($self->database_handler())->add_product({image => $1, name => $2, price => $3}, $cat_id, $cat_path);
 	    my $file = 'C:\Apache2.2\localhost\www\application\media\img\products\\' . $1;
 	    unless (-e $file) {

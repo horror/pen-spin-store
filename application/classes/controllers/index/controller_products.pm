@@ -1,6 +1,7 @@
 package controller_products; {
     use base controller_base_index;
     use folder_config;
+    use model_products;
     use strict;
     use utf8;
   
@@ -25,6 +26,25 @@ package controller_products; {
             ]
         });
     }
+    
+    sub action_detailes {
+        my $self = shift;
+        
+	my $prod_images = model_products->new($self->database_handler(), $self->lang())
+	        ->get_product_images_by_id($self->request->{'id'});
+	my $prod_info = model_products->new($self->database_handler(), $self->lang())
+	        ->get_product_info_by_id($self->request->{'id'});
+        $self->add_template_params({
+            page_title => $self->lang->PRODUCTS_DETAILES_PAGE_TITLE,
+            center_block => [
+                fw_view->new('index', 'product_detailes.tpl', {
+		    product_info => $prod_info,
+		    product_images => $prod_images,
+		})->execute()
+            ]
+        });
+    }
+    
  
 }
 

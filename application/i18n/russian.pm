@@ -14,6 +14,7 @@ sub LOGIN_ERROR_MESSAGE() {'Логин и пароль введены не ве�
 sub REG_SUCCESS_MESSAGE() {'Вы успешно зарегистрировались'};
 sub EMPTY_FORM_FIELDS_EXISTS_MESSAGE() {'Заполнены не все поля'};
 sub PASS_CONFIRM_ERROR_MESSAGE() {'Заполнены не все поля'};
+sub LOST_PRODUCT_NAME() {'Не заполенно поле название'};
 
 #mail
 sub REG_MAIL_HEADER() {'Вы зарегистрировались на сайте Localhost'};
@@ -32,6 +33,7 @@ sub COPY_RIGHTS() {'все права защищены (с) 2012'};
 sub ADMIN_LOGIN_PAGE_TITLE() {'Вход в админ. панель'};
 sub ADMIN_STATS_PAGE_TITLE() {'Статистика'};
 sub PRODUCTS_PAGE_TITLE() {'Товары и категории'};
+sub PRODUCTS_DETAILES_PAGE_TITLE() {'Страница товара'};
 sub IMPORT_PAGE_TITLE() {'Импорт товаров и категорий'};
 sub USERS_PAGE_TITLE() {'Пользователи'};
 sub INDEX_MAIN_PAGE_TITLE() {'Главная страница'};

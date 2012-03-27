@@ -57,7 +57,7 @@
         @product_info{@sign_fields} = @product_values;
 	
 	my @messages;
-	push @messages, $self->lang->EMPTY_FORM_FIELDS_EXISTS_MESSAGE if grep /^$/, values %product_info;
+	push @messages, $self->lang->LOST_PRODUCT_NAME unless defined $product_info{name};
 	
 	return (@messages) ? \@messages : \%product_info;
     }

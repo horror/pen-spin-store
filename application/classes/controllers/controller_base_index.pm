@@ -8,8 +8,8 @@
 
   
   sub new {
-    my ($class, $args, $cookies) = @_;
-    my $self = fw_controller::new($class, $args, $cookies);
+    my ($class, $args, $cookies, $files) = @_;
+    my $self = fw_controller::new($class, $args, $cookies, $files);
 
     my $auth = auth->new($self->cookies(), $self->database_handler());
     my $widget_login = widget_login->new($args, $cookies, $self->database_handler());
@@ -37,15 +37,17 @@
         c_rights => $self->lang->COPY_RIGHTS,
         login_form => ((!$auth->logged_user_id()) ? $widget_login->execute() : '')
     }, [
-        APP_CSS_PATH . __DM . 'style.css', 
-        APP_CSS_PATH . __DM . 'style_index.css',
         APP_CSS_PATH . __DM . 'jquery-ui-1.8.18.custom.css',
         APP_CSS_PATH . __DM . 'ui.jqgrid.css',
         APP_CSS_PATH . __DM . 'ui.multiselect.css',
+        APP_CSS_PATH . __DM . 'style.css', 
+        APP_CSS_PATH . __DM . 'style_index.css',
     ],[
         APP_JS_PATH . __DM . 'jquery-1.7.1.min.js',
+        APP_JS_PATH . __DM . 'jquery-ui-1.8.18.custom.min.js',
         APP_JS_PATH . __DM . 'i18n' . __DM . 'grid.locale-ru.js',
-        APP_JS_PATH . __DM . 'jquery.jqGrid.min.js', 
+        APP_JS_PATH . __DM . 'jquery.jqGrid.src.js',
+        APP_JS_PATH . __DM . 'products_edit_forms.js', 
     ]);
     return $self;
   }

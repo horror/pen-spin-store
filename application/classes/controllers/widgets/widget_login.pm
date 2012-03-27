@@ -5,7 +5,7 @@ package widget_login; {
   
     sub new {
         my ($class, $args, $cookies, $dbh) = @_;
-        my $self = fw_controller::new($class, \%$args, \%$cookies, $dbh);
+        my $self = fw_controller::new($class, $args, $cookies, {}, $dbh);
         $self->template_settings('widgets', 'widget_login.tpl');
         $self->before();
         return $self;
