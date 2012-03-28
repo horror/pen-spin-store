@@ -50,15 +50,18 @@ package products_importer; {
     sub parse_sub_categorises {
 	my($self, $page, $par_cat_name, $cat_id, $cat_path) = @_;
 	
-	$self->parse._category($1, $2, $cat_path)
+	$self->parse_category($1, $2, $cat_path)
 	    while ($page =~ m#<a.*?href="(.*?cPath=[\d]+_[\d]+.*?)">(?:<strong>|)(?:<.*?>)*(.*?)(?:<[/]?s.*?|)</a>#ig);
     }
     
     sub parse_products {
 	my($self, $page, $par_cat_name, $cat_id, $cat_path) = @_;
-	
-	while ($page =~ m#<tr class="productListing-(?:odd|even)">.*?(:?<img src="images/(.*?)")?.*?<a.*?products_id=.*?>(.*?)</a>.*?<td.*?>(?:&nbsp;|)\$(.*?)(?:&nbsp;|)</td>#igs) {
-	    model_products->new($self->database_handler())->add_product({image => $1, name => $2, price => $3}, $cat_id, $cat_path);
+	my $prod_id = 0;
+	while ($page =~ m#<tr class="productListing-(?:odd|even)">.*?<img src="images/(.*?)".*?<a.*?products_id=.*?>(.*?)</a>.*?<td.*?>(?:&nbsp;|)\$(.*?)(?:&nbsp;|)</td>#igs) {
+	    $prod_id = model_products->new($self->database_handler())
+	        ->add_product_and_get_id({image => $1, name => $2, price => $3}, $cat_id, $cat_path);
+	    model_products->new($self->database_handler())
+		->add_product_images_by_id($prod_id, [$1]);
 	    my $file = 'C:\Apache2.2\localhost\www\application\media\img\products\\' . $1;
 	    unless (-e $file) {
 	        getstore( "http://penwish.com/images/$1", 'C:\Apache2.2\localhost\www\application\media\img\products\\' . $1);

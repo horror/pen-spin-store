@@ -1,12 +1,13 @@
 ﻿package fw_controller; {
     use Class::InsideOut qw/:std/;
-    #use Image::Magick;
+    use GD;
+    use Image::GD::Thumbnail;
     use fw_view;
     use DBI;
     use config_database;
     use folder_config;
     use CGI qw(header cookie redirect);
-    use File::Copy;
+    use File::Copy qw( copy );
     use strict;
     use russian;
     use utf8;
@@ -113,35 +114,16 @@
     sub upload {
         my($self, $stream, $file_path) = @_;
         
+        #copy($stream, $file_path);
         open UPLOADFILE, ">$file_path";
+        
         binmode UPLOADFILE;
-        while ( <$stream> ) {
-            print UPLOADFILE;
-        }
-      
+        
+        print UPLOADFILE $stream;
+        
         close UPLOADFILE;
     }
     
-    #sub make_thumb_image {
-    #    my($self, $file_path) = @_;
-    #    
-    #    my $image = Image::Magick->new; 
-    #    my $x = $image->Read($file_path);
-    #    
-    #    my ($ox,$oy) = $image->Get('base-columns','base-rows'); 
-    #    
-    #    my $nx = int(($ox/$oy)*150); 
-    #
-    #    $image->Resize(geometry=>geometry, width=>$nx, height=>150);
-    #    
-    #    if ($nx > 200) { 
-    #       my $nnx = int(($nx-200)/2); 
-    #       $image->Crop(x=>$nnx, y=>0);
-    #       $image->Crop('200x150'); 
-    #    }
-    #    $x = $image->Write($file_path); 
-    #}
-    #
     sub store_files_and_get_names {
         my($self, $files, $store_dir, $file_extension) = @_;
         
@@ -151,12 +133,17 @@
         for(my $i = 0; $i < @file_names; $i++) {
 	    if (defined $files->[$i]) {
 		my $io_handle = $files->[$i]->handle;
-		
-                $self->upload($io_handle, "$store_dir/$file_names[$i]");
                 
-                #thumbnail create
-		#$self->upload($io_handle, "$store_dir/thumb/$file_names[$i]");
-                #$self->make_thumb_image("$store_dir/thumb/$file_names[$i]");
+                my $srcImage = GD::Image->newFromJpeg($io_handle);
+                
+                my ($thumb,$x,$y) = Image::GD::Thumbnail::create($srcImage, 300);
+		
+                $self->upload($thumb->jpeg, "$store_dir/$file_names[$i]");
+                if ($i == 0) {
+                    ($thumb,$x,$y) = Image::GD::Thumbnail::create($srcImage, 150);
+                    
+                    $self->upload($thumb->jpeg, "$store_dir/thumb/$file_names[$i]");
+                }
 	    }
 	}
         
@@ -168,6 +155,7 @@
         
         for my $file_name (@$file_names) {
 	    unlink("$store_dir/$file_name");
+            unlink("$store_dir/thumb/$file_name");
 	}
     }
 }

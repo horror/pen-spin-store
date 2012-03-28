@@ -42,7 +42,7 @@ function gen_table() {
 };
 
 function unitsInStockFormatter(cellvalue) {
-    return (cellvalue) ? "<div class='product_image'><img src='/application/media/img/products/" + cellvalue + "' /></div>" : '';
+    return (cellvalue) ? "<div class='product_image'><img src='/application/media/img/products/thumb/" + cellvalue + "' /></div>" : '';
 }; 
 
 function nameFormatter(cellValue, opts, rowObject) {
