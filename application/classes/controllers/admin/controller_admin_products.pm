@@ -4,9 +4,9 @@ package controller_admin_products; {
     use products_importer;
     use strict;
     use model_products;
-    use Switch;
     use validation;
     use auth;
+    use 5.010;
     use utf8;
   
     sub new {
@@ -57,10 +57,10 @@ package controller_admin_products; {
 	    return;
 	}
 	
-	switch ($self->request->{'oper'}) {
-	    case "del" {$self->action_delete();}
-	    case "edit" {$self->action_edit();}
-	    case "add" {$self->action_add();}
+	given ($self->request->{'oper'}) {
+	    when ("del") {$self->action_delete()}
+	    when ("edit") {$self->action_edit()}
+	    when ("add") {$self->action_add()}
 	}
 	
         $self->redirection('admin_products', 'show');

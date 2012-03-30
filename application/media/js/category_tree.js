@@ -29,6 +29,7 @@ function gen_table() {
 	     }
       });
       jQuery("#category_tree").jqGrid('navGrid',"#pager_tree");
+     // jQuery("#category_tree").setSelection(1, true);
 };
 
 $(document).ready(gen_table);

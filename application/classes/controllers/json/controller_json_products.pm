@@ -8,7 +8,6 @@
      
     sub new {
         my($class, $params, $cookies) = @_;
-        my $self = bless {}, $class;
     
         my $self = controller_json_grid_base::new($class, $params, $cookies);
             

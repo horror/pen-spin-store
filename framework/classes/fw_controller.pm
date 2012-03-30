@@ -53,6 +53,8 @@
     
     sub render {
         my($self) = shift;
+        binmode(STDOUT, ":utf8");
+        
         print header(
             -cookie => [map ($_, values %{$self->cookies()})],
             -charset => "utf-8"

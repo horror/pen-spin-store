@@ -1,16 +1,15 @@
 package controller_json_grid_base; {
     use base fw_controller_json;
     use Class::InsideOut qw/:std/;
-    use Switch;
     use strict;
     use auth;
+    use 5.010;
     use utf8;
     
     public search_ops_sql_repr => my %search_ops_sql_repr;
      
     sub new {
         my($class, $params, $cookies) = @_;
-        my $self = bless {}, $class;
     
         my $self = fw_controller_json::new($class, $params, $cookies);
 	
@@ -44,10 +43,10 @@ package controller_json_grid_base; {
 	    return;
 	}
 	
-	switch ($self->request->{'oper'}) {
-	    case "del" {$self->action_delete();}
-	    case "edit" {$self->action_edit();}
-	    case "add" {$self->action_add();}
+	given ($self->request->{'oper'}) {
+	    when ("del") {$self->action_delete()}
+	    when ("edit") {$self->action_edit()}
+	    when ("add") {$self->action_add()}
 	}
 
     }

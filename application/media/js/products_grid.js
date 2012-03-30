@@ -39,6 +39,7 @@ function gen_table() {
 	{}, // del options
 	{multipleSearch:true,closeAfterSearch:true} // search options);
     );
+
 };
 
 function unitsInStockFormatter(cellvalue) {
