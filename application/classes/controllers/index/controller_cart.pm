@@ -1,5 +1,6 @@
 package controller_cart; {
     use base controller_base_index;
+    use folder_config;
     use strict;
     use model_orders;
     use auth;
@@ -16,17 +17,16 @@ package controller_cart; {
     sub action_show {
         my $self = shift;
         
-#        $self->add_template_scripts([
-#	    APP_JS_PATH . __DM . 'products_grid.js',
-#	    APP_JS_PATH . __DM . 'category_tree.js'
-#	]);
-#        
-#        $self->add_template_params({
-#            page_title => $self->lang->PRODUCTS_PAGE_TITLE,
-#            center_block => [
-#                fw_view->new('common', 'products_show.tpl')->execute()
-#            ]
-#        });
+        $self->add_template_scripts([
+	    APP_JS_PATH . __DM . 'cart_grid.js'
+	]);
+        
+        $self->add_template_params({
+            page_title => $self->lang->CART_PAGE_TITLE,
+            center_block => [
+                fw_view->new('index', 'cart_show.tpl')->execute()
+            ]
+        });
     }
     
     sub action_set {

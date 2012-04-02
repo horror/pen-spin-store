@@ -18,7 +18,7 @@ package widget_cart; {
 	
 	my $product_cnt = model_orders
 	    ->new($self->database_handler(), $self->lang())
-	    ->get_products_cart_cnt($auth->logged_anonymous_user_id());
+	    ->get_products_cart_cnt($auth->logged_user_id());
 	$self->add_template_params({
 	    product_cnt => $product_cnt,                            
 	});

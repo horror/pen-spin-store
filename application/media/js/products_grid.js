@@ -50,6 +50,7 @@ function unitsInStockFormatter(cellvalue) {
 function nameFormatter(cellValue, opts, rowObject) {
     return "<a class='product_link' href='index.pl?controller=products&action=detailes&id=" + rowObject[0] + "' >" + cellValue + "</a>";
 };
+
 function cartFormatter(cellValue, opts, rowObject) {
     return "<form action='index.pl?controller=cart&action=set&oper=add' method='post'>" +
         "<label for='p_cnt'>Количество</label><input id='p_cnt' name='product_count' type='number' value='1'/>" +
@@ -59,6 +60,7 @@ function cartFormatter(cellValue, opts, rowObject) {
 	"<input type='submit' value='в корзину'>" +
 	"</form>";
 };
+
 function nameUnFormatter(cellValue, opts, rowObject) {
     return $('a', rowObject).attr('text');
 };
