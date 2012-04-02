@@ -55,6 +55,7 @@
         my($self) = shift;
         binmode(STDOUT, ":utf8");
         
+        $self->set_cookies('sid', $self->cookies->{sid}->{value}); #ПОЧЕМУ ТЕРЯЕЦА ВРЕМЯ КУКОВ?!!
         print header(
             -cookie => [map ($_, values %{$self->cookies()})],
             -charset => "utf-8"
@@ -77,6 +78,8 @@
         my ($self, $controller, $action) = @_;
         my $url = ROOT_PATH . "index.pl?controller=$controller&action=$action";
         
+        $self->set_cookies('sid', $self->cookies->{sid}->{value});
+        
         print redirect(        
             -cookie => [map ($_, values %{$self->cookies()})],
             -url => $url,
@@ -88,7 +91,7 @@
         my ($self, $name, $value) = @_;
         
         my $cookies = $self->cookies();
-        $cookies->{$name} = cookie(-name => $name, -value => $value);
+        $cookies->{$name} = cookie(-name => $name, -value => $value, -expires => '+6M');
         $self->cookies($cookies);
     }
     

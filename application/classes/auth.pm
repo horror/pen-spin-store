@@ -104,7 +104,7 @@ package auth; {
     
     sub set_cookie_sid {
         my ($self, $value) = @_;
-        $self->cookies->{sid} = cookie(-name => 'sid', -value => $value);
+        $self->cookies->{sid} = cookie(-name => 'sid', -value => $value, -expires => '+6M');
     }
     
     sub get_cookie_sid {
