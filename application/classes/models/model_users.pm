@@ -14,10 +14,25 @@ package model_users; {
     
     sub add_user {
         my($self, $fields) = @_;
+        
+        if ($self->fw_database_handler
+            ->select_num_rows('users', {login => $fields->{login}}))
+        {
+            return 0;
+        }
         my $pass = $fields->{password};
         $fields->{password} = md5_hex($fields->{password});
         $self->fw_database_handler->insert('users', $fields);
         $fields->{password} = $pass;
+        return 1;
+    }
+    
+    sub add_anonymous_user {
+        my($self, $sid) = @_;
+        
+        my $fields = {sid => $sid};
+        
+        $self->fw_database_handler->insert('users', $fields);
     }
     
     sub update_user {

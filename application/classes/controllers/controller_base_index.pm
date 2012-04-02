@@ -3,6 +3,8 @@
   use folder_config;
   use widget_login;
   use widget_horz_menu;
+  use widget_cart;
+  use model_users;
   use auth;
   use utf8;
 
@@ -29,13 +31,26 @@
         },
     ]);
     
+    my $logged_authorized_user_id= $auth->logged_authorized_user_id();
+    if (!$logged_authorized_user_id) {
+        my $logged_anonymous_id = $auth->logged_anonymous_user_id();
+        if(!$logged_anonymous_id) {
+            my $new_sid = $auth->gen_sid();
+            model_users->new($self->database_handler(), $self->lang())
+	        ->add_anonymous_user($new_sid);
+            $auth->set_cookie_sid($new_sid);
+        }
+    }
+    
+    my $widget_cart = widget_cart->new($args, $cookies, $self->database_handler());
     
     $self->template_settings('index', 'base_index.tpl', {
         site_name => $self->lang->INDEX_TITLE,
         main_menu => $widget_menu->execute(),
+        cart => $widget_cart->execute(),
         site_description => $self->lang->INDEX_DESCR,
         c_rights => $self->lang->COPY_RIGHTS,
-        login_form => ((!$auth->logged_user_id()) ? $widget_login->execute() : '')
+        login_form => ((!$logged_authorized_user_id) ? $widget_login->execute() : '')
     }, [
         APP_CSS_PATH . __DM . 'jquery-ui-1.8.18.custom.css',
         APP_CSS_PATH . __DM . 'ui.jqgrid.css',

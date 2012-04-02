@@ -61,7 +61,23 @@ package auth; {
         my $self = shift;
         return $self->logged_id({
             sid => $self->get_cookie_sid(),
-            last_visit => { '>' => \["UNIX_TIMESTAMP() - ?", SESSION_TIME_SECONDS]}
+        });
+    }
+    
+    sub logged_authorized_user_id {
+        my $self = shift;
+        return $self->logged_id({
+            sid => $self->get_cookie_sid(),
+            last_visit => { '>' => \["UNIX_TIMESTAMP() - ?", SESSION_TIME_SECONDS]},
+            login => { '!=', 'Anonymous' }
+        });
+    }
+    
+    sub logged_anonymous_user_id {
+        my $self = shift;
+        return $self->logged_id({
+            sid => $self->get_cookie_sid(),
+            login => 'Anonymous',
         });
     }
     

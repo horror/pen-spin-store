@@ -4,13 +4,14 @@ function gen_table() {
 	editurl: 'index.pl?controller=json_products&action=set',
 	datatype: "json",
 	mtype: 'GET',
-   	colNames:['id', 'Изображение', 'Название', 'Описание', 'Цена'],
+   	colNames:['id', 'Изображение', 'Название', 'Описание', 'Цена', 'Корзина'],
    	colModel:[
 	        {name:'id',index:'id', hidden: true, width:55, align:"left", editable:false},
    		{name:'image',index:'image',sortable:false,align:"left",search:false,editable:true,editoptions:{size:10}, formatter: unitsInStockFormatter},
    		{name:'name',index:'name',align:"left",searchoptions:{sopt:['bw','bn','ew','en','cn','nc']},editable:true,editrules:{required:true},editoptions:{size:10}, formatter: nameFormatter, unformat: nameUnFormatter},
    		{name:'description',index:'description',align:"left",searchoptions:{sopt:['bw','bn','ew','en','cn','nc']},editable:true,editrules:{required:true},editoptions:{size:10}},
 		{name:'price',index:'price',align:"left",searchoptions:{sopt:['eq','ne','lt','le','gt','ge']},editable:true,editrules:{required:true},editoptions:{size:10}},
+		{name:'сart',align:"left",search:false,formatter: cartFormatter},
    	],
    	rowNum:10,
    	rowList:[10, 20, 30],
@@ -49,7 +50,15 @@ function unitsInStockFormatter(cellvalue) {
 function nameFormatter(cellValue, opts, rowObject) {
     return "<a class='product_link' href='index.pl?controller=products&action=detailes&id=" + rowObject[0] + "' >" + cellValue + "</a>";
 };
-
+function cartFormatter(cellValue, opts, rowObject) {
+    return "<form action='index.pl?controller=cart&action=set&oper=add' method='post'>" +
+        "<label for='p_cnt'>Количество</label><input id='p_cnt' name='product_count' type='number' value='1'/>" +
+	"<input type='hidden' name='product_id' value='" + rowObject[0] + "'>" +
+	"<input type='hidden' name='product_price' value='" + rowObject[4] + "'>" +
+	"<input type='hidden' name='oper' value='add'>" +
+	"<input type='submit' value='в корзину'>" +
+	"</form>";
+};
 function nameUnFormatter(cellValue, opts, rowObject) {
     return $('a', rowObject).attr('text');
 };

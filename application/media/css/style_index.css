@@ -45,10 +45,16 @@
     width: 70%;
 }
 
-#card {
+#cart {
     float: right;
     margin: 10px;
 }
+
+#cart_image {
+    width: 70px;
+    height: 70px;
+}
+
 
 #a_register, .news a {
     color: #004352;
@@ -72,6 +78,10 @@
     display: none;
 }
 
-
+#p_cnt {
+    min-width: 40px !important;
+    width: 40px;
+    margin-left: 28px;
+}
 
 

@@ -21,16 +21,22 @@
 	my $result = validation->new($self->request(), $self->lang())->validate_registration_user_form();
 	
 	if (ref $result eq "HASH") {
-	    model_users->new($self->database_handler(), $self->lang())->add_user($result);
-	    mailer->new($self->request->{email},
-	        $self->lang->REG_MAIL_HEADER,
-		sprintf($self->lang->REG_MAIL_TEXT_FORMAT,
-		    $self->request->{name},
-		    $self->request->{login},
-		    $self->request->{password}
-		)
-	    )->send_mail();
-	    push @messages, REG_SUCCESS_MESSAGE;
+	    if (model_users->new($self->database_handler(), $self->lang())
+	        ->add_user($result))
+	    {
+		mailer->new($self->request->{email},
+		    $self->lang->REG_MAIL_HEADER,
+		    sprintf($self->lang->REG_MAIL_TEXT_FORMAT,
+			$self->request->{name},
+			$self->request->{login},
+			$self->request->{password}
+		    )
+		)->send_mail();
+		push @messages, $self->lang->REG_SUCCESS_MESSAGE;
+	    }
+	    else {
+	        push @messages, $self->lang->REG_FAIL_DUBLICATE_LOGIN;
+	    }
 	}
 	else {
 	    @messages = @$result;

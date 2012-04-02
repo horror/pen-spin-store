@@ -2,7 +2,6 @@
     use base controller_json_grid_base;
     use model_products;
     use validation;
-    use Switch;
     use strict;
     use utf8;
      

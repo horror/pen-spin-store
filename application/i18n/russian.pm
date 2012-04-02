@@ -12,6 +12,7 @@ sub new {
 #mesaages
 sub LOGIN_ERROR_MESSAGE() {'Логин и пароль введены не верно'};
 sub REG_SUCCESS_MESSAGE() {'Вы успешно зарегистрировались'};
+sub REG_FAIL_DUBLICATE_LOGIN() {'Пользователь с таким логином уже зарегистрирован'};
 sub EMPTY_FORM_FIELDS_EXISTS_MESSAGE() {'Заполнены не все поля'};
 sub PASS_CONFIRM_ERROR_MESSAGE() {'Заполнены не все поля'};
 sub LOST_PRODUCT_NAME() {'Не заполенно поле название'};

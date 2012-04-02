@@ -21,9 +21,9 @@
             </hgroup>
             
             <!--корзина-->
-            [% IF card %]
-                <section id="card">
-                    [% card %]
+            [% IF cart %]
+                <section id="cart">
+                    [% cart %]
                 </section>
             [% END %]
             
