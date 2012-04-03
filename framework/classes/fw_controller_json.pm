@@ -49,8 +49,8 @@
     
     sub render {
         my $self = shift;
-        binmode(STDOUT, ":utf8");
-        print header(-type => "application/json", -charset => "utf-8");;
+       # binmode(STDOUT, ":utf8");
+        print header(-type => "application/json", -charset => "utf-8");
         print $self->execute();
     }
     

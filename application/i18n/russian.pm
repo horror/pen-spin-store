@@ -47,6 +47,7 @@ sub IMPORT_MENU_ITEM() {'Импорт'};
 sub STATS_MENU_ITEM() {'Статистика'};
 sub USERS_MENU_ITEM() {'Пользователи'};
 sub MAIN_MENU_ITEM() {'Главная'};
+sub ORDERS_MENU_ITEM() {'Заказы'};
 
 #form_elements
 sub SUBMIT_REG_CAPTION() {'Зарегистрироваться'};

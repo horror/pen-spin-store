@@ -28,6 +28,10 @@ package controller_base_admin; {
                 uri => sprintf($uri_pattern, 'products', 'show'),
                 caption => $self->lang->PRODUCTS_MENU_ITEM,
             },
+            {
+                uri => sprintf($uri_pattern, 'orders', 'show'),
+                caption => $self->lang->ORDERS_MENU_ITEM,
+            },
         ]);
     
         $self->template_settings('admin', 'base_admin.tpl', {
