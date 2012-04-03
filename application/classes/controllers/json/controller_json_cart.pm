@@ -29,10 +29,10 @@ package controller_json_cart; {
 	    ->logged_user_id();
 	
 	$self->data->{rows} = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_card_items_jbgrid_format_calls($user_id, $sord, $sidx, $limit, $start);
+	    ->get_order_items_jbgrid_format_calls($user_id, 0, $sord, $sidx, $limit, $start);
 	    
 	my $count = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_card_items_count($user_id);
+	    ->get_order_items_count($user_id, 0);
 	
 	$self->set_grid_params($count, $limit, $page);
     }

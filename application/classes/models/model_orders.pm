@@ -40,30 +40,46 @@ package model_orders; {
         return $item_info;
     }
     
-    sub get_card_items_count {
-        my($self, $user_id) = @_;
+    sub get_order_items_count {
+        my($self, $user_id, $order_id) = @_;
 	
-	my $card_id = $self->get_card_id($user_id);
+	$order_id = $self->get_card_id($user_id) unless $order_id;
 	
         return $self->fw_database_handler
-	    ->select_num_rows('orders', {id => $card_id});
+	    ->select_num_rows('orders', {id => $order_id});
     }
     
-    sub get_card_items_jbgrid_format_calls {
-        my($self, $user_id, $order_direction, $order_field, $limit, $start) = @_;
+    sub get_order_items_jbgrid_format_calls {
+        my($self, $user_id, $order_id, $order_direction, $order_field, $limit, $start) = @_;
 	
-	my $card_id = $self->get_card_id($user_id);
+	$order_id = $self->get_card_id($user_id) unless $order_id;
 	
         my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.total_price
 	    FROM ps_orders_products_href o
 	    INNER JOIN ps_products p on o.product_id = p.id
-	    WHERE order_id = $card_id
+	    WHERE order_id = $order_id
             ORDER BY $order_field $order_direction LIMIT $start, $limit";
 	    
         return $self->fw_database_handler
 	    ->select_and_fetchall_array_for_jsGrid_without_abstract(
 	        $stmt
 	    );   
+    }
+    
+    sub get_orders_count {
+        my $self = shift;
+	
+        return $self->fw_database_handler->select_num_rows('orders');
+    }
+    
+    sub get_orders_jbgrid_format_calls {
+        my($self, $order, $limit, $start) = @_;
+	    
+	my @rows = qw[id user_id products_cnt total_price status];
+	    
+        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid(
+	    'orders', \@rows, {}, $order, $limit, $start
+	);   
     }
     
     sub add_cart_and_get_id {
@@ -154,6 +170,24 @@ package model_orders; {
 	    $card_item_info->{order_id},
 	    -$card_item_info->{total_price},
 	    -$card_item_info->{products_count}
+	);
+    }
+    
+    sub change_order_status {
+        my($self, $order_id, $status) = @_;
+	
+	$self->fw_database_handler->update('orders', {status => $status},{id => $order_id});
+    }
+    
+    sub delete_order {
+        my($self, $order_id) = @_;
+	
+	$self->fw_database_handler->delete('orders', {id => $order_id});
+	
+	#все товары относящиеся к этому заказу тоже стираем
+	$self->fw_database_handler->delete(
+	    'orders_products_href',
+	    {order_id => $order_id}
 	);
     }
 }
