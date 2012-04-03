@@ -1,6 +1,6 @@
 function gen_table() { 
     jQuery("#products_grid").jqGrid({
-   	url: 'index.pl?controller=json_products&action=get',
+   	url: 'index.pl?controller=json_products&action=get&cat_id=' + $.jCookies({ get : 'cat_id' }),
 	editurl: 'index.pl?controller=json_products&action=set',
 	datatype: "json",
 	mtype: 'GET',
@@ -58,6 +58,7 @@ function cartFormatter(cellValue, opts, rowObject) {
 	"<input type='hidden' name='product_price' value='" + rowObject[4] + "'>" +
 	"<input type='hidden' name='oper' value='add'>" +
 	"<input type='submit' value='в корзину'>" +
+	"<br /><a class='comparison' id='product_id_" + rowObject[0] + "' href='#'>Добавить к сравнению</a>" +
 	"</form>";
 };
 

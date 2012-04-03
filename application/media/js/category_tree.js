@@ -23,6 +23,11 @@ function gen_table() {
 		    search:false
 		});
 		
+		$.jCookies({
+		    name : 'cat_id',
+		    value : id
+	        });
+		
 		$('#products_grid').trigger('reloadGrid',[{page:1}]);
 		
 		$('#category_id').val(id);

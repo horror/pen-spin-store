@@ -56,10 +56,10 @@
 				if(o.get == "*" && raw_data) {
 					for(name in raw_data)
 						try{
-							raw_data[name] = JSON.parse(atob(raw_data[name]));
+							raw_data[name] = JSON.parse(decodeURI(raw_data[name]));
 						}catch(exception){
 							try{
-								raw_data[name] = JSON.parse(atob(decodeURIComponent(raw_data[name])));
+								raw_data[name] = JSON.parse(decodeURI(raw_data[name]));
 							}catch(exception2){
 								if(o.error) return exception2;								
 							}							
@@ -72,7 +72,7 @@
 				for(x in names)
 					if(names[x] == o.get)
 					try{
-						return JSON.parse(atob(raw_data[o.get]));
+						return JSON.parse(decodeURI(raw_data[o.get]));
 					}catch(exception){
 						if(o.error) return exception;
 					}
@@ -95,7 +95,7 @@
 			}else{
 				date.setTime(date.getTime() + (o.days*24*60*60*1000));
 			}
-			document.cookie = o.name + "=" + btoa(JSON.stringify(o.value)) + "; expires=" + date.toGMTString() + "; path=/";
+			document.cookie = o.name + "=" + JSON.stringify(o.value) + "; expires=" + date.toGMTString() + "; path=/";
 			return true;
 	// get cookie			
 		} else return false;			
