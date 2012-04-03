@@ -30,7 +30,7 @@ function gen_table() {
             $('#name').val(dataFromTheRow.name.match(patt)[1]);
 	    $('#description').val(dataFromTheRow.description);
 	    $('#price').val(dataFromTheRow.price);
-	},
+	}
     });
     
     jQuery("#products_grid").jqGrid('navGrid','#pager_grid',

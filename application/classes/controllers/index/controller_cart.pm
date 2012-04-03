@@ -29,6 +29,37 @@ package controller_cart; {
         });
     }
     
+    sub action_check_out {
+        my $self = shift;
+    
+        my $auth = auth->new($self->cookies(), $self->database_handler());
+	if (my $user_id = $auth->logged_authorized_user_id()) {
+	     model_orders
+		->new($self->database_handler(), $self->lang())
+		->change_order_status_by_user_id($user_id, 1);
+	    $self->add_template_params({
+		page_title => $self->lang->CART_PAGE_TITLE,
+		center_block => [
+		    'Заказ оформлен'
+		]
+	    });
+	}
+	else {
+	    $self->redirection('registration', 'index');
+	}
+    }
+    
+    sub action_erase_cart {
+        my $self = shift;
+	
+        model_orders->new($self->database_handler(), $self->lang())
+		->delete_order_by_user_id(
+		    auth->new($self->cookies(), $self->database_handler())->logged_user_id()
+		);
+		
+	$self->redirection('cart', 'show');
+    }
+    
     sub action_set {
         my $self = shift;
 	

@@ -12,8 +12,8 @@ package model_users; {
         return $self;
     }
     
-    sub add_user {
-        my($self, $fields) = @_;
+    sub regist_user {
+        my($self, $anon_id, $fields) = @_;
         
         if ($self->fw_database_handler
             ->select_num_rows('users', {login => $fields->{login}}))
@@ -22,7 +22,7 @@ package model_users; {
         }
         my $pass = $fields->{password};
         $fields->{password} = md5_hex($fields->{password});
-        $self->fw_database_handler->insert('users', $fields);
+        $self->fw_database_handler->update('users', $fields, {id => $anon_id});
         $fields->{password} = $pass;
         return 1;
     }

@@ -7,6 +7,7 @@
   use fw_view;
   use mailer;
   use validation;
+  use auth;
 
   sub new {
     my ($class, $args, $cookies) = @_;
@@ -22,7 +23,7 @@
 	
 	if (ref $result eq "HASH") {
 	    if (model_users->new($self->database_handler(), $self->lang())
-	        ->add_user($result))
+	        ->regist_user($self->request->{anonymous_id}, $result))
 	    {
 		mailer->new($self->request->{email},
 		    $self->lang->REG_MAIL_HEADER,
@@ -42,10 +43,13 @@
 	    @messages = @$result;
 	}
     }
+    
+    my $auth = auth->new($self->cookies(), $self->database_handler());
     $self->add_template_params({
         page_title => $self->lang->INDEX_REG_PAGE_TITLE,
 	center_block => [
 	    fw_view->new('common', 'user_form.tpl', {
+	        anonymous_id => $auth->logged_anonymous_user_id(),
 		messages => \@messages,
                 submit_caption => $self->lang->SUBMIT_REG_CAPTION,
 	    })->execute()

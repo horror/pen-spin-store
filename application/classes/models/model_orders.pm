@@ -40,32 +40,6 @@ package model_orders; {
         return $item_info;
     }
     
-    sub get_order_items_count {
-        my($self, $user_id, $order_id) = @_;
-	
-	$order_id = $self->get_card_id($user_id) unless $order_id;
-	
-        return $self->fw_database_handler
-	    ->select_num_rows('orders', {id => $order_id});
-    }
-    
-    sub get_order_items_jbgrid_format_calls {
-        my($self, $user_id, $order_id, $order_direction, $order_field, $limit, $start) = @_;
-	
-	$order_id = $self->get_card_id($user_id) unless $order_id;
-	
-        my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.total_price
-	    FROM ps_orders_products_href o
-	    INNER JOIN ps_products p on o.product_id = p.id
-	    WHERE order_id = $order_id
-            ORDER BY $order_field $order_direction LIMIT $start, $limit";
-	    
-        return $self->fw_database_handler
-	    ->select_and_fetchall_array_for_jsGrid_without_abstract(
-	        $stmt
-	    );   
-    }
-    
     sub get_orders_count {
         my $self = shift;
 	
@@ -173,6 +147,28 @@ package model_orders; {
 	);
     }
     
+    sub get_order_items_count {
+        my($self, $order_id) = @_;
+	
+        return $self->fw_database_handler
+	    ->select_num_rows('orders', {id => $order_id});
+    }
+    
+    sub get_order_items_jbgrid_format_calls {
+        my($self, $order_id, $order_direction, $order_field, $limit, $start) = @_;
+	
+        my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.total_price
+	    FROM ps_orders_products_href o
+	    INNER JOIN ps_products p on o.product_id = p.id
+	    WHERE order_id = $order_id
+            ORDER BY $order_field $order_direction LIMIT $start, $limit";
+	    
+        return $self->fw_database_handler
+	    ->select_and_fetchall_array_for_jsGrid_without_abstract(
+	        $stmt
+	    );   
+    }
+    
     sub change_order_status {
         my($self, $order_id, $status) = @_;
 	
@@ -189,6 +185,29 @@ package model_orders; {
 	    'orders_products_href',
 	    {order_id => $order_id}
 	);
+    }
+    
+    sub get_order_items_count_by_user_id {
+        my($self, $user_id) = @_;
+	return $self->get_order_items_count($self->get_card_id($user_id));
+    }
+    
+    sub get_order_items_jbgrid_format_calls_by_user_id {
+        my($self, $user_id, $order_direction, $order_field, $limit, $start) = @_;
+	return $self->get_order_items_jbgrid_format_calls(
+	    $self->get_card_id($user_id), $order_direction,
+	    $order_field, $limit, $start
+	);
+    }
+    
+    sub change_order_status_by_user_id {
+        my($self, $user_id, $status) = @_;
+	$self->change_order_status($self->get_card_id($user_id), $status);
+    }
+    
+    sub delete_order_by_user_id {
+        my($self, $user_id) = @_;
+	$self->delete_order($self->get_card_id($user_id));
     }
 }
 

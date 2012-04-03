@@ -51,10 +51,10 @@ package controller_json_orders; {
 	    ->logged_user_id();
 	
 	$self->data->{rows} = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_order_items_jbgrid_format_calls(0, $self->request->{'id'}, $sord, $sidx, $limit, $start);
+	    ->get_order_items_jbgrid_format_calls($self->request->{'id'}, $sord, $sidx, $limit, $start);
 	    
 	my $count = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_order_items_count(0, $self->request->{'id'});
+	    ->get_order_items_count($self->request->{'id'});
 	
 	$self->set_grid_params($count, $limit, $page);
     }

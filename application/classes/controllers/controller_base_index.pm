@@ -50,19 +50,21 @@
         cart => $widget_cart->execute(),
         site_description => $self->lang->INDEX_DESCR,
         c_rights => $self->lang->COPY_RIGHTS,
-        login_form => ((!$logged_authorized_user_id) ? $widget_login->execute() : '')
+        login_form => ((!$logged_authorized_user_id) ? $widget_login->execute() : '<a id="logout" href="#">Выход</a>')
     }, [
-        APP_CSS_PATH . __DM . 'jquery-ui-1.8.18.custom.css',
-        APP_CSS_PATH . __DM . 'ui.jqgrid.css',
-        APP_CSS_PATH . __DM . 'ui.multiselect.css',
         APP_CSS_PATH . __DM . 'style.css', 
         APP_CSS_PATH . __DM . 'style_index.css',
+        APP_CSS_PATH . __DM . 'jquery-ui-1.8.18.custom.css',
+        APP_CSS_PATH . __DM . 'ui.jqgrid.css',
+        APP_CSS_PATH . __DM . 'ui.multiselect.css',     
     ],[
         APP_JS_PATH . __DM . 'jquery-1.7.1.min.js',
         APP_JS_PATH . __DM . 'jquery-ui-1.8.18.custom.min.js',
         APP_JS_PATH . __DM . 'i18n' . __DM . 'grid.locale-ru.js',
         APP_JS_PATH . __DM . 'jquery.jqGrid.src.js',
-        APP_JS_PATH . __DM . 'products_edit_forms.js', 
+        APP_JS_PATH . __DM . 'products_edit_forms.js',
+        APP_JS_PATH . __DM . 'jcookies.js',
+        APP_JS_PATH . __DM . 'logout.js',
     ]);
     return $self;
   }
