@@ -29,7 +29,7 @@ package controller_json_cart; {
 	    ->logged_user_id();
 	
 	$self->data->{rows} = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_order_items_jbgrid_format_calls_by_user_id($user_id $sord, $sidx, $limit, $start);
+	    ->get_order_items_jbgrid_format_calls_by_user_id($user_id, $sord, $sidx, $limit, $start);
 	    
 	my $count = model_orders->new($self->database_handler(), $self->lang())
 	    ->get_order_items_count_by_user_id($user_id);

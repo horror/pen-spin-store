@@ -40,6 +40,7 @@ sub USERS_PAGE_TITLE() {'Пользователи'};
 sub INDEX_MAIN_PAGE_TITLE() {'Главная страница'};
 sub INDEX_REG_PAGE_TITLE() {'Регистрация'};
 sub CART_PAGE_TITLE() {'Корзина'};
+sub COMPARISON_PAGE_TITLE() {'Сравнения'};
 
 #menu_items
 sub PRODUCTS_MENU_ITEM() {'Товары'};

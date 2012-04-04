@@ -48,6 +48,14 @@ package model_products; {
         );
     }
     
+    sub get_products_for_comparison {
+        my($self, $products_id) = @_;
+        my @fields = qw[id image name description price];
+        return $self->fw_database_handler->select_and_fetchall_arrayhashesref(
+            'products', \@fields, {id => { -in => $products_id }}
+        );
+    }
+    
     sub get_products_cnt {
         my($self, $filters) = @_;
         my @fields = qw[id image name description price];

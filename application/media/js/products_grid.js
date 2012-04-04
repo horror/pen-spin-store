@@ -30,6 +30,57 @@ function gen_table() {
             $('#name').val(dataFromTheRow.name.match(patt)[1]);
 	    $('#description').val(dataFromTheRow.description);
 	    $('#price').val(dataFromTheRow.price);
+	},
+	loadComplete: function() {
+	//stackowerflow
+	        Array.prototype.remove = function(){
+		    var what, a= arguments, L= a.length, ax;
+		    while(L && this.length){
+			what= a[--L];
+			while((ax= this.indexOf(what))!= -1){
+			    this.splice(ax, 1);
+			}
+		    }
+		    return this;
+		}
+		
+		var arr = $(".comparison");
+		var new_data = $.jCookies({ get : 'comparison_prod_ids' });
+		if (new_data)
+		for (var i = 0; i < arr.length; ++i){
+		    
+		    var prod_id = $(arr[i]).attr('id');
+		    if(new_data.indexOf(prod_id.match(/\d+/)[0]) == -1) {
+			$(arr[i]).text('Добавить к сравнению');
+		    }
+		    else {
+			$(arr[i]).text('Убрать из сравнения');
+		    }
+		}
+		
+		
+		
+	        $(".comparison").click( 
+		    function () {
+			var prod_id = this.id.match(/\d+/)[0];
+			var new_data = $.jCookies({ get : 'comparison_prod_ids' }) || [];
+			if(new_data.indexOf(prod_id) != -1) {
+			    new_data.remove(prod_id);
+			    $(this).text('Добавить к сравнению');
+			}
+			else {
+			    new_data = new_data.concat(prod_id);
+			    $(this).text('Убрать из сравнения');
+			}
+			$.jCookies({
+			    name : 'comparison_prod_ids',
+			    value : new_data
+			});
+			console.log($.jCookies({ get : 'comparison_prod_ids' }));
+			
+			
+		    }
+		);
 	}
     });
     
@@ -58,7 +109,7 @@ function cartFormatter(cellValue, opts, rowObject) {
 	"<input type='hidden' name='product_price' value='" + rowObject[4] + "'>" +
 	"<input type='hidden' name='oper' value='add'>" +
 	"<input type='submit' value='в корзину'>" +
-	"<br /><a class='comparison' id='product_id_" + rowObject[0] + "' href='#'>Добавить к сравнению</a>" +
+	"<br /><a class='comparison' id='product_id_" + rowObject[0] + "' >Добавить к сравнению</a>" +
 	"</form>";
 };
 

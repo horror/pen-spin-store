@@ -84,4 +84,22 @@
     margin-left: 28px;
 }
 
+#comparison_table td {
+    padding: 7px;
+}
 
+.comparison, #erase_comparison{
+    color: #333;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.comparison:hover, #erase_comparison:hover{
+    color: #004352 !important;
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
+#erase_comparison {
+    float: right;
+}

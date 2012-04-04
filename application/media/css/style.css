@@ -216,16 +216,6 @@ time {
     text-decoration: underline !important;
 }
 
-.comparison {
-    color: #333;
-    text-decoration: underline;
-}
-
-.comparison:hover {
-    color: #004352 !important;
-    text-decoration: underline !important;
-}
-
 #products_grid {
     word-wrap: break-word;
     overflow: hidden;

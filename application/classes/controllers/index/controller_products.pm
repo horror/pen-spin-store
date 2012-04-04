@@ -16,7 +16,8 @@ package controller_products; {
         
         $self->add_template_scripts([
 	    APP_JS_PATH . __DM . 'products_grid.js',
-	    APP_JS_PATH . __DM . 'category_tree.js'
+	    APP_JS_PATH . __DM . 'category_tree.js',
+	    APP_JS_PATH . __DM . 'comparison.js'
 	]);
         
         $self->add_template_params({

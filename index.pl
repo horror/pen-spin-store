@@ -32,8 +32,10 @@ my $controller = $controller_name->new(\%_params, \%_cookies, \@_files);
 #my $action_is_exists;
 #eval '$action_is_exists = exists ' . $controller_name . '::{"action_' . $action . '"}';
 if (1) {
-    {no warnings 'once';
-    "${controller_name}::action_$action"->($controller);}
+  #  if (*{"${controller_name}::action_$action"}{CODE}) {}
+    eval {no warnings 'once';
+    "${controller_name}::action_$action"->($controller);};
+    if ($@) {}
     $controller->render();
 }
 else {
