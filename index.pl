@@ -1,4 +1,4 @@
-﻿#! C:\strawberry\perl\bin\perl.exe -w
+﻿#! C:\strawberry\perl\bin\perl.exe -d
 use File::Basename;
 use lib (dirname(__FILE__)); #Корень сайта.
 use folder_config;
@@ -24,27 +24,26 @@ my $controller_name = 'controller_'
     );
 my $action = $q->url_param('action') ? $q->url_param('action') : DEFAULT_ROUTE_ACTION;
 
+eval {
 require "$controller_name.pm";
-my $controller = $controller_name->new(\%_params, \%_cookies, \@_files);
-#eval "\$controller->action_$action()";
+};
 
-#my $action_is_exists;
-#eval '$action_is_exists = exists ' . $controller_name . '::{"action_' . $action . '"}';
-if (1) {
-  #  if (*{"${controller_name}::action_$action"}{CODE}) {}
-    eval {no warnings 'once';
-    "${controller_name}::action_$action"->($controller);};
-    if ($@) {}
-    $controller->render();
+if ($@) {
+    print $q->header(-status=>'404',-type=>'text/html');
+}
+
+my $controller = $controller_name->new(\%_params, \%_cookies, \@_files);
+
+eval {
+{no warnings 'once';
+"${controller_name}::action_$action"->($controller);};
+};
+
+if ($@) {
+    print $q->header(-status=>'404',-type=>'text/html');
 }
 else {
-    open (F, "<404.html")  
-          or die ("Cannot open file data.txt");
-
-    binmode(STDOUT, ":utf8");
-    print $q->header(-charset => "utf-8");
-    print while(<F>);
-    close (F);
+  $controller->render();
 }
 
-
+#if (*{"${controller_name}::action_$action"}{CODE}) {
