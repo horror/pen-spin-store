@@ -34,6 +34,14 @@
 		    )
 		)->send_mail();
 		push @messages, $self->lang->REG_SUCCESS_MESSAGE;
+		
+		#Логинем
+		my $auth = auth->new($self->cookies(), $self->database_handler());
+                $auth->login_user($self->request->{login}, $self->request->{password});
+		
+		#Отправляем в корзину
+		$self->redirection('cart', 'show');
+		return;
 	    }
 	    else {
 	        push @messages, $self->lang->REG_FAIL_DUBLICATE_LOGIN;

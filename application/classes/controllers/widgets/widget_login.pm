@@ -14,7 +14,7 @@ package widget_login; {
         my $self = shift;
         if ($self->request->{submit}) {
             my $auth = auth->new($self->cookies(), $self->database_handler());
-            $auth->login_user($self->request->{login}, $self->request->{password});
+            $auth->login_user_with_merge($self->request->{login}, $self->request->{password});
         }
     }
 }

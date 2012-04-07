@@ -33,14 +33,16 @@ package auth; {
     }
 
     sub login {
-        my($self, $params) = @_;
+        my($self, $params, $need_merge) = @_;
         my $db = $self->fw_database_handler();
         my ($user) = @{$db->select_and_fetchall_arrayhashesref('users', 'id', $params)};
         if(defined $user) {
-            model_orders->new($self->database_handler())
-                ->merge_carts($self->logged_anonymous_user_id(), $user->{id});
-            model_users->new($self->database_handler())
-                ->delete_user($self->logged_anonymous_user_id());
+            if ($need_merge) {
+                model_orders->new($self->database_handler())
+                    ->merge_carts($self->logged_anonymous_user_id(), $user->{id});
+                model_users->new($self->database_handler())
+                    ->delete_user($self->logged_anonymous_user_id());
+            }
             $self->change_user_sid($user->{id}, my $sid = $self->gen_sid());          #Как нормально переписать?
             $self->set_cookie_sid($sid);
             return $user->{id};
@@ -49,8 +51,13 @@ package auth; {
     }
     
     sub login_user {
+        my($self, $login, $pass, $need_merge) = @_;
+        return $self->login({login => $login, password =>  md5_hex($pass)}, $need_merge);
+    }
+    
+    sub login_user_with_merge {
         my($self, $login, $pass) = @_;
-        return $self->login({login => $login, password =>  md5_hex($pass)});
+        return $self->login_user($login, $pass, 1);
     }
     
     sub login_admin {

@@ -30,14 +30,26 @@ package model_orders; {
 	return ($not_completed_order) ? $not_completed_order->{products_cnt} : 0;
     }
     
-    sub get_card_item_by_id {
-        my($self, $item_id) = @_;
+    sub get_card_item{
+        my($self, $cond) = @_;
 	
 	my ($item_info) = @{$self->fw_database_handler->select_and_fetchall_arrayhashesref(
-            'orders_products_href', '*', {id => $item_id}
+            'orders_products_href', '*', $cond
         )};
 	
         return $item_info;
+    }
+    
+    sub get_card_item_by_id {
+        my($self, $item_id) = @_;
+	
+        return $self->get_card_item({id => $item_id});
+    }
+    
+    sub get_card_item_by_prod_id {
+        my($self, $order_id, $prod_id) = @_;
+	
+        return $self->get_card_item({order_id => $order_id, product_id => $prod_id});
     }
     
     sub get_orders_count {
@@ -90,19 +102,27 @@ package model_orders; {
 	    $card_id = $self->add_cart_and_get_id($user_id);
 	};
 	
-	my $fields = {
-	    order_id => $card_id,
-	    product_id => $prod_id,
-	    products_count => $prod_cnt,
-	    total_price => ($prod_price * $prod_cnt)
-	};
+	my $card_item_info = $self->get_card_item_by_prod_id($card_id, $prod_id);
 	
-	$self->fw_database_handler->insert('orders_products_href', $fields);
-	$self->change_order_total_and_prod_cnt(
-	    $card_id,
-	    ($prod_price * $prod_cnt),
-	    $prod_cnt
-	);
+	if(defined $card_item_info) {
+	    $self->change_card_item_cnt($user_id, $card_item_info->{id}, $card_item_info->{products_count} + $prod_cnt);
+	}
+	else {
+	    my $fields = {
+		order_id => $card_id,
+		product_id => $prod_id,
+		products_count => $prod_cnt,
+		price_per_one => $prod_price
+	    };
+	    
+	    $self->fw_database_handler->insert('orders_products_href', $fields);
+	
+	    $self->change_order_total_and_prod_cnt(
+		$card_id,
+		($prod_price * $prod_cnt),
+		$prod_cnt
+	    );
+	}
     }
     
     sub change_card_item_cnt {
@@ -114,22 +134,15 @@ package model_orders; {
 	    return;
 	}
 	
-	my $price_one_prod = $card_item_info->{total_price} / $card_item_info->{products_count};
-	
 	$self->fw_database_handler->update(
 	    'orders_products_href',
-	    {
-	        products_count => $card_item_cnt,
-	        total_price => ($price_one_prod * $card_item_cnt)
-	    },
+	    {products_count => $card_item_cnt},
 	    {id => $card_item_id}
 	);
 	
-	
-	
 	$self->change_order_total_and_prod_cnt(
 	    $card_item_info->{order_id},
-	    $price_one_prod * $card_item_cnt - $card_item_info->{total_price},
+	    $card_item_info->{price_per_one} * ($card_item_cnt - $card_item_info->{products_count}),
 	    $card_item_cnt - $card_item_info->{products_count}
 	);
     }
@@ -165,7 +178,7 @@ package model_orders; {
     sub get_order_items_jbgrid_format_calls {
         my($self, $order_id, $order_direction, $order_field, $limit, $start) = @_;
 	
-        my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.total_price
+        my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.price_per_one
 	    FROM ps_orders_products_href o
 	    INNER JOIN ps_products p on o.product_id = p.id
 	    WHERE order_id = $order_id
