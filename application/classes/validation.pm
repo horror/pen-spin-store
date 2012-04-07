@@ -41,6 +41,12 @@
         return $self->validate_user_form(\@sign_fields);
     }
     
+    sub validate_profile_user_form {
+        my $self = shift;
+        my @sign_fields  = qw\name login email\;
+        return $self->validate_user_form(\@sign_fields);
+    }
+    
     sub validate_user_card_form {
         my $self = shift;
         my @sign_fields  = qw\name login email password role\;

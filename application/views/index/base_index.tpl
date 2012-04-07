@@ -44,7 +44,13 @@
             
         </header>    
         <!--/шапка-->
-        
+        <!--главное меню-->
+        [% IF sub_menu %]
+            <aside id="sub_menu">
+                [% sub_menu %]
+            </aside>
+        [% END %]
+        <!--/главное меню-->
         <!--левый блок-->
         [% IF left_block %]
             <aside id="left_block">

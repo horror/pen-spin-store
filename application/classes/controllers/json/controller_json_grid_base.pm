@@ -7,6 +7,8 @@ package controller_json_grid_base; {
     use utf8;
     
     public search_ops_sql_repr => my %search_ops_sql_repr;
+    public user_is_admin => my %user_is_admin;
+    public user_id => my %user_id;
      
     sub new {
         my($class, $params, $cookies) = @_;
@@ -31,15 +33,19 @@ package controller_json_grid_base; {
 	    cn => {-like => '%%%s%%' },
 	    nc => {-not_like => '%%%s%%' },
 	});
-       
+        my $auth = auth->new($self->cookies(), $self->database_handler());
+	
+        $self->user_is_admin($auth->logged_admin_id() > 0);
+	
+	$self->user_id($auth->logged_user_id());
+	
         return $self;
     }
     
     sub action_set {
         my $self = shift;
-	
-        my $auth = auth->new($self->cookies(), $self->database_handler());
-	if (not $auth->logged_admin_id()) {
+
+	if (!$self->user_is_admin()) {
 	    return;
 	}
 	

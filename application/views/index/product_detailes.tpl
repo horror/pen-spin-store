@@ -1,12 +1,10 @@
-<h2 class="product_title">[% product_info.name %]</h2>
-<table>
-<tr>
+﻿<h2 class="product_title">[% product_info.name %]</h2>
+<ul id="product_images">
 [% FOREACH image = product_images %]
-    <td><img src='/application/media/img/products/[% image %]' /></td>
+    <li><img src='/application/media/img/products/[% image %]' /></li>
 [% END %]
-</tr>
-<tr>
-     <td>[% product_info.description %]</td>
-     <td>[% product_info.price %]</td>
-</tr>
+</ul>
+<table id="product_table">
+     <tr><td>Цена: [% product_info.price %] $</td></tr>
+     <tr><td>Описание: [% product_info.description %]</td></tr>
 </table>

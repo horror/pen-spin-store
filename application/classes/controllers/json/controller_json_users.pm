@@ -15,6 +15,10 @@ package controller_json_users; {
     
     sub action_get {
         my $self = shift;
+	
+	if (!$self->user_is_admin()) {
+	    return;
+	}
         
 	my $page = $self->request->{'page'}; 
 	my $limit = $self->request->{'rows'};

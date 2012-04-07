@@ -3,10 +3,10 @@
    	url: 'index.pl?controller=json_orders&action=get_orders',
 	editurl: 'index.pl?controller=json_orders&action=set',
 	datatype: "json",
-   	colNames: ['ID', 'ID пользователя', 'Количество товаров', 'Общая стоимость', 'Статус заказа'],
+   	colNames: ['ID', 'Логин', 'Количество товаров', 'Общая стоимость', 'Статус заказа'],
    	colModel: [
 	        {name:'id',index:'id', align:"left", editable:false},
-		{name:'user_id',index:'user_id', align:"left", editable:false},
+		{name:'login',index:'login', align:"left", editable:false},
    		{name:'products_cnt',index:'products_cnt', align:"left", editable:false},
    		{name:'total_price',index:'total_price',align:"left", editable:false},
    		{name:'status',index:'status', align:"left", editable:true,
@@ -32,14 +32,14 @@
 		datatype: 'json',
 		mtype: 'POST',
 		postData: {'id':row_id},
-		colNames:['ID', 'ID продукта', 'Изображение', 'Название', 'Количество', 'Общая стоимость'],
+		colNames:['ID', 'ID продукта', 'Изображение', 'Название', 'Количество', 'Стоймость за штуку'],
 		colModel:[
 			{name:'id',index:'id', hidden: true, align:"left", editable:false},
 			{name:'product_id',index:'product_id', hidden: true, align:"left", editable:false},
 			{name:'image',index:'image', align:"left", editable:false, formatter: unitsInStockFormatter},
 			{name:'name',index:'name',align:"left", editable:false, formatter: nameFormatter},
 			{name:'products_count',index:'products_count', align:"left", editable:true, editrules:{required:true}, editoptions:{size:10}},
-			{name:'total_price',index:'total_price', align:"left", editable:false},
+			{name:'price_per_one',index:'price_per_one', align:"left", editable:false},
 		],
 		autowidth: true,
 		rownumbers: true,
@@ -52,13 +52,6 @@
 	    });
 	}
     });
-    jQuery("#orders_grid").jqGrid('navGrid','#pager',
-        {del:true, add:false, edit:true}, //options
-	{height: 'auto'}, // edit options
-	{}, // add options
-	{reloadAfterSubmit:true}, // del options
-	{} // search options);
-    );
 };
 
 function unitsInStockFormatter(cellvalue) {

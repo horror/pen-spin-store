@@ -45,6 +45,7 @@ package controller_base_admin; {
             APP_CSS_PATH . __DM . 'ui.multiselect.css',
         ],[
             APP_JS_PATH . __DM . 'jquery-1.7.1.min.js',
+            APP_JS_PATH . __DM . 'jcookies.js',
             APP_JS_PATH . __DM . 'jquery-ui-1.8.18.custom.min.js',
             APP_JS_PATH . __DM . 'i18n' . __DM . 'grid.locale-ru.js',
             APP_JS_PATH . __DM . 'jquery.jqGrid.src.js',

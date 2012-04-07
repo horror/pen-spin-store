@@ -1,5 +1,4 @@
 ﻿#! C:\strawberry\perl\bin\perl.exe -w
-
 use File::Basename;
 use lib (dirname(__FILE__)); #Корень сайта.
 use folder_config;

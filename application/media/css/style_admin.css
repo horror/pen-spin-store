@@ -20,10 +20,6 @@ header {
     color: orange;
 }
 
-.hidden_block {
-    display: none;
-}
-
 .admin_login {
     width: 10%;
     margin: 0 auto;

@@ -41,6 +41,8 @@ sub INDEX_MAIN_PAGE_TITLE() {'Главная страница'};
 sub INDEX_REG_PAGE_TITLE() {'Регистрация'};
 sub CART_PAGE_TITLE() {'Корзина'};
 sub COMPARISON_PAGE_TITLE() {'Сравнения'};
+sub PROFILE_PAGE_TITLE() {'Профиль'};
+sub ORDERS_PAGE_TITLE() {'Заказы'};
 
 #menu_items
 sub PRODUCTS_MENU_ITEM() {'Товары'};
@@ -49,9 +51,12 @@ sub STATS_MENU_ITEM() {'Статистика'};
 sub USERS_MENU_ITEM() {'Пользователи'};
 sub MAIN_MENU_ITEM() {'Главная'};
 sub ORDERS_MENU_ITEM() {'Заказы'};
+sub PROFILE_MENU_ITEM() {'Профиль'};
+sub SETTINGS_MENU_ITEM() {'Настройки'};
 
 #form_elements
 sub SUBMIT_REG_CAPTION() {'Зарегистрироваться'};
+sub SUBMIT_SAVE_PROFILE_CAPTION() {'Сохранить профиль'};
 sub SELECT_ADMIN_ROLE() {'Админ'};
 sub SELECT_USER_ROLE() {'Юзер'};
 

@@ -1,0 +1,1 @@
+<section><table id="orders_grid"></table><div id="pager"></div></section>

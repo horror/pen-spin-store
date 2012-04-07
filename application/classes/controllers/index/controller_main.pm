@@ -1,6 +1,5 @@
 ﻿package controller_main; {
   use base controller_base_index;
-  use Class::InsideOut qw/:std/;
   use model_users;
   use strict;
   use utf8;

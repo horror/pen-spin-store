@@ -22,13 +22,6 @@
 	sortorder: "desc",
 	caption:"Корзина"
     });
-    jQuery("#cart_grid").jqGrid('navGrid','#pager',
-        {del:true, add:false, edit:true}, //options
-	{height: 'auto'}, // edit options
-	{}, // add options
-	{reloadAfterSubmit:true}, // del options
-	{} // search options);
-    );
 };
 
 function unitsInStockFormatter(cellvalue) {

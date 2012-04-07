@@ -13,12 +13,15 @@ package controller_admin_orders; {
     sub action_show {
         my $self = shift;
         
-        $self->add_template_scripts([APP_JS_PATH . __DM . 'orders_grid.js']);
+        $self->add_template_scripts([
+            APP_JS_PATH . __DM . 'orders_grid.js',
+            APP_JS_PATH . __DM . 'orders_admin_pager.js',
+        ]);
         
         $self->add_template_params({
             page_title => $self->lang->USERS_PAGE_TITLE,
             center_block => [
-                fw_view->new('admin', 'orders_show.tpl')->execute()
+                fw_view->new('common', 'orders_show.tpl')->execute()
             ]
         });
     }

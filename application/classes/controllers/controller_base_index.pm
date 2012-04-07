@@ -44,6 +44,15 @@
         }
     }
     
+    if ($logged_authorized_user_id) {
+        $widget_menu->add_items([
+            {
+                uri => sprintf($uri_pattern, 'profile', 'show'),
+                caption => $self->lang->PROFILE_MENU_ITEM,
+            }
+        ]);
+    }
+    
     my $widget_cart = widget_cart->new($args, $cookies, $self->database_handler());
     
     $self->template_settings('index', 'base_index.tpl', {

@@ -53,19 +53,43 @@ package model_orders; {
     }
     
     sub get_orders_count {
-        my $self = shift;
+        my ($self, $filter) = @_;
 	
-        return $self->fw_database_handler->select_num_rows('orders');
+        return $self->fw_database_handler->select_num_rows('orders', $filter);
+    }
+    
+    sub get_user_orders_count {
+        my ($self, $user_id) = @_;
+	
+        return $self->get_orders_count({user_id => $user_id});
     }
     
     sub get_orders_jbgrid_format_calls {
-        my($self, $order, $limit, $start) = @_;
+        my($self, $user_id, $order_field, $order_direction, $limit, $start) = @_;
+	
+	my $stmt = "SELECT o.id, u.login, o.products_cnt, o.total_price, o.status
+	    FROM ps_orders o
+	    INNER JOIN ps_users u on o.user_id = u.id";
+	$stmt .= " WHERE user_id = ?" if $user_id;
+        $stmt .= " ORDER BY ? ? LIMIT ?, ?";
+	   
+	my $bind = [$order_field, $order_direction, $start, $limit];
 	    
-	my @rows = qw[id user_id products_cnt total_price status];
+	unshift(@$bind, $user_id) if $user_id;
+	
+        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid_without_abstract($stmt, $bind); 
+    }
+    
+    sub get_all_orders_jbgrid_format_calls {
+        my($self, $order_field, $order_direction, $limit, $start) = @_;
 	    
-        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid(
-	    'orders', \@rows, {}, $order, $limit, $start
-	);   
+	return $self->get_orders_jbgrid_format_calls(0, $order_field, $order_direction, $limit, $start);
+    }
+    
+    sub get_user_orders_jbgrid_format_calls {
+        my($self, $user_id, $order_field, $order_direction, $limit, $start) = @_;
+	    
+	return $self->get_orders_jbgrid_format_calls($user_id, $order_field, $order_direction, $limit, $start);
     }
     
     sub add_cart_and_get_id {
@@ -181,12 +205,15 @@ package model_orders; {
         my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.price_per_one
 	    FROM ps_orders_products_href o
 	    INNER JOIN ps_products p on o.product_id = p.id
-	    WHERE order_id = $order_id
-            ORDER BY $order_field $order_direction LIMIT $start, $limit";
-	    
+	    WHERE order_id = ?
+            ORDER BY ? ? LIMIT ?, ?";
+	   
+	my $bind = [$order_id, $order_field, $order_direction, $start, $limit];
+	
         return $self->fw_database_handler
 	    ->select_and_fetchall_array_for_jsGrid_without_abstract(
-	        $stmt
+	        $stmt,
+		$bind
 	    );   
     }
     
