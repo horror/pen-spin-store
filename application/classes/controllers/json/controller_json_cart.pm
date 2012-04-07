@@ -50,15 +50,21 @@ package controller_json_cart; {
     sub action_edit {
         my $self = shift;
 	
+	my $user_id = auth->new($self->cookies(), $self->database_handler())
+	    ->logged_user_id();
+	    
 	model_orders->new($self->database_handler(), $self->lang())
-	    ->change_card_item_cnt($self->request->{'id'}, $self->request->{'products_count'});
+	    ->change_card_item_cnt($user_id, $self->request->{'id'}, $self->request->{'products_count'});
     }
     
     sub action_delete {
         my $self = shift;
 	
+	my $user_id = auth->new($self->cookies(), $self->database_handler())
+	    ->logged_user_id();
+	    
 	model_orders->new($self->database_handler(), $self->lang())
-	    ->delete_card_item($self->request->{'id'});
+	    ->delete_card_item($user_id, $self->request->{'id'});
     }
 }
 

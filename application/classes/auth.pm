@@ -6,8 +6,11 @@ package auth; {
     use strict;
     use utf8;
     use config_session;
+    use model_orders;
+    use model_users;
   
-    public fw_database_handler => my %database_handler;
+    public fw_database_handler => my %fw_database_handler;
+    public database_handler => my %database_handler;
     public cookies => my %cookies;
   
     sub new {
@@ -17,6 +20,8 @@ package auth; {
         register($self); 
             
         $self->fw_database_handler(fw_database->new($dbh)); #dbh всегда не пуст.
+        $self->database_handler($dbh);
+        
         $self->cookies($cookies);
         return $self;
     }
@@ -32,9 +37,13 @@ package auth; {
         my $db = $self->fw_database_handler();
         my ($user) = @{$db->select_and_fetchall_arrayhashesref('users', 'id', $params)};
         if(defined $user) {
+            model_orders->new($self->database_handler())
+                ->merge_carts($self->logged_anonymous_user_id(), $user->{id});
+            model_users->new($self->database_handler())
+                ->delete_user($self->logged_anonymous_user_id());
             $self->change_user_sid($user->{id}, my $sid = $self->gen_sid());          #Как нормально переписать?
             $self->set_cookie_sid($sid);
-            return 1;
+            return $user->{id};
         }
         return 0;
     }

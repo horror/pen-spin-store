@@ -16,6 +16,8 @@
     my $auth = auth->new($self->cookies(), $self->database_handler());
     my $widget_login = widget_login->new($args, $cookies, $self->database_handler());
     
+    $widget_login->login();
+    
     my $widget_menu = widget_horz_menu->new($args, $cookies, $self->database_handler());
     
     my $uri_pattern = "index.pl?controller=%s&action=%s";

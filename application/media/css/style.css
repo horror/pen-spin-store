@@ -95,8 +95,9 @@ label {
     background-color: transparent;
 }
 
-.admin_table th, .admin_table td { 
-    font-size: 75%; 
+.admin_table th, .admin_table td,
+.comparison_table tr, .comparison_table td, .comparison_table th { 
+    font-size: 90%; 
     border-width: 1px;
     padding: 1px;
     border-style: solid;

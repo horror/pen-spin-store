@@ -106,9 +106,13 @@ package model_orders; {
     }
     
     sub change_card_item_cnt {
-        my($self, $card_item_id, $card_item_cnt) = @_;
+        my($self, $user_id, $card_item_id, $card_item_cnt) = @_;
 	
 	my $card_item_info = $self->get_card_item_by_id($card_item_id);
+	
+	if ($self->get_card_id($user_id) != $card_item_info->{'order_id'}) {
+	    return;
+	}
 	
 	my $price_one_prod = $card_item_info->{total_price} / $card_item_info->{products_count};
 	
@@ -131,9 +135,13 @@ package model_orders; {
     }
     
     sub delete_card_item {
-        my($self, $card_item_id) = @_;
+        my($self, $user_id, $card_item_id) = @_;
 	
 	my $card_item_info = $self->get_card_item_by_id($card_item_id);
+	
+	if ($self->get_card_id($user_id) != $card_item_info->{'order_id'}) {
+	    return;
+	}
 	
 	$self->fw_database_handler->delete(
 	    'orders_products_href',
@@ -208,6 +216,18 @@ package model_orders; {
     sub delete_order_by_user_id {
         my($self, $user_id) = @_;
 	$self->delete_order($self->get_card_id($user_id));
+    }
+    
+    sub merge_carts {
+        my($self, $anon_id, $user_id) = @_;
+	
+	$self->delete_order_by_user_id($user_id);
+	
+	$self->fw_database_handler->update(
+	    'orders',
+	    {user_id => $user_id},
+	    {user_id => $anon_id}
+	);
     }
 }
 

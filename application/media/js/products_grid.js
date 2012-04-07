@@ -51,7 +51,7 @@ function gen_table() {
 		    
 		    var prod_id = $(arr[i]).attr('id');
 		    if(new_data.indexOf(prod_id.match(/\d+/)[0]) == -1) {
-			$(arr[i]).text('Добавить к сравнению');
+			$(arr[i]).text('Добавить к сравнению');	
 		    }
 		    else {
 			$(arr[i]).text('Убрать из сравнения');
@@ -67,10 +67,12 @@ function gen_table() {
 			if(new_data.indexOf(prod_id) != -1) {
 			    new_data.remove(prod_id);
 			    $(this).text('Добавить к сравнению');
+			    $("#campr_items_cnt").text($("#campr_items_cnt").text() * 1 - 1);
 			}
 			else {
 			    new_data = new_data.concat(prod_id);
 			    $(this).text('Убрать из сравнения');
+			    $("#campr_items_cnt").text($("#campr_items_cnt").text() * 1 + 1);		    
 			}
 			$.jCookies({
 			    name : 'comparison_prod_ids',

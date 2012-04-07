@@ -32,6 +32,7 @@ package controller_comparison; {
             page_title => $self->lang->COMPARISON_PAGE_TITLE,
             center_block => [
                 fw_view->new('index', 'comparison_show.tpl', {
+                    products_cnt => (scalar @$products),
                     products => $products,
                 })->execute()
             ]

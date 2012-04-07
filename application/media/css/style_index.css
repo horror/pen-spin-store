@@ -103,3 +103,9 @@
 #erase_comparison {
     float: right;
 }
+
+#comparison_section {
+    margin: 0 auto;
+    width: 90%;
+    overflow: scroll;
+}

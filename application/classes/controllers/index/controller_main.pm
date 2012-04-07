@@ -17,8 +17,6 @@
     
     my $auth = auth->new($self->cookies(), $self->database_handler()); 
     my $user_id = $auth->logged_user_id();
-    
-    my $user = model_users->new($self->database_handler(), $self->lang())->get_user_on_id($user_id);
 
     $self->add_template_params({
         page_title => $self->lang->INDEX_MAIN_PAGE_TITLE,
