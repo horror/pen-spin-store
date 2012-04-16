@@ -1,4 +1,4 @@
-package model_users; {
+﻿package model_users; {
     use base fw_model;
     use Digest::MD5 qw(md5_hex);
     use config_session;
@@ -12,11 +12,15 @@ package model_users; {
         return $self;
     }
     
+    sub not_allowed_login {
+        my($self, $login, $user_id) = @_;
+        return $self->fw_database_handler->select_num_rows('users', {login => $login, id => {'!=' => $user_id}});
+    }
+    
     sub regist_user {
         my($self, $anon_id, $fields) = @_;
         
-        if ($self->fw_database_handler
-            ->select_num_rows('users', {login => $fields->{login}}))
+        if ($self->not_allowed_login($fields->{login}, 0))
         {
             return 0;
         }
@@ -38,24 +42,17 @@ package model_users; {
     sub update_user {
         my($self, $fields, $user_id) = @_;
         delete $fields->{password};
+        if ($self->not_allowed_login($fields->{login}, $user_id))
+        {
+            return 0;
+        }
         $self->fw_database_handler->update('users', $fields, { id => $user_id });
+        return 1;
     }
     
     sub delete_user {
         my($self, $user_id) = @_;
         $self->fw_database_handler->delete('users', { id => $user_id });
-    }
-    
-    sub get_all_users {
-        my($self, $online_only, $filters, $order) = @_;
-        
-        if ($online_only) {
-            $filters->{last_visit} = { '>' => \["UNIX_TIMESTAMP() - ?", SESSION_TIME_SECONDS]};
-        }
-        
-        return $self->fw_database_handler->select_and_fetchall_arrayhashesref(
-            'users', '*', $filters, $order
-        );
     }
     
     sub get_users_jbgrid_format_calls {
