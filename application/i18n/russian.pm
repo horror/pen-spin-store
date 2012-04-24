@@ -43,6 +43,7 @@ sub CART_PAGE_TITLE() {'Корзина'};
 sub COMPARISON_PAGE_TITLE() {'Сравнения'};
 sub PROFILE_PAGE_TITLE() {'Профиль'};
 sub ORDERS_PAGE_TITLE() {'Заказы'};
+sub REPORTS_PAGE_TITLE() {'Отчеты'};
 
 #menu_items
 sub PRODUCTS_MENU_ITEM() {'Товары'};
@@ -53,6 +54,7 @@ sub MAIN_MENU_ITEM() {'Главная'};
 sub ORDERS_MENU_ITEM() {'Заказы'};
 sub PROFILE_MENU_ITEM() {'Профиль'};
 sub SETTINGS_MENU_ITEM() {'Настройки'};
+sub REPORTS_MENU_ITEM() {'Отчеты'};
 
 #form_elements
 sub SUBMIT_REG_CAPTION() {'Зарегистрироваться'};

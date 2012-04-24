@@ -1,0 +1,18 @@
+
+The file examples/sample-letter.pdf can't be found, aborts
+
+The error occurred when executing:
+ at C:/strawberry/perl/site/lib/PDF/Reuse.pm line 1231
+	PDF::Reuse::findGet('examples/sample-letter.pdf', '') called at blib\lib\PDF\Reuse.pm (autosplit into blib\lib\auto\PDF\Reuse\getPage.al) line 4591
+	PDF::Reuse::getPage('examples/sample-letter.pdf', 1, 'print') called at C:/strawberry/perl/site/lib/PDF/Reuse.pm line 613
+	PDF::Reuse::prForm('examples/sample-letter.pdf') called at C:\Apache2.2\localhost\www\ababaca.pl line 46
+
+Situation when the error occurred
+
+   Bytes written to the current pdf-file,    pos    = 101
+   Object processed, not necessarily written objNr  = 4
+   Current pdf-file,                         utfil  = examples/sample-letters.pdf
+   File logging the run,                     runfil = undef
+   Local time                                       = Thu Apr 19 22:10:20 2012
+
+

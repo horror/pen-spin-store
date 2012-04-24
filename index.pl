@@ -1,4 +1,4 @@
-﻿#! C:\strawberry\perl\bin\perl.exe -d
+﻿#! C:\strawberry\perl\bin\perl.exe -w
 use File::Basename;
 use lib (dirname(__FILE__)); #Корень сайта.
 use folder_config;
@@ -30,6 +30,7 @@ require "$controller_name.pm";
 
 if ($@) {
     print $q->header(-status=>'404',-type=>'text/html');
+    print $@;
 }
 
 my $controller = $controller_name->new(\%_params, \%_cookies, \@_files);
@@ -41,9 +42,10 @@ eval {
 
 if ($@) {
     print $q->header(-status=>'404',-type=>'text/html');
+    print $@;
 }
 else {
-  $controller->render();
+    $controller->render();
 }
 
 #if (*{"${controller_name}::action_$action"}{CODE}) {

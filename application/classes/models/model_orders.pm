@@ -196,7 +196,7 @@ package model_orders; {
         my($self, $order_id) = @_;
 	
         return $self->fw_database_handler
-	    ->select_num_rows('orders', {id => $order_id});
+	    ->select_num_rows('orders_products_href', {order_id => $order_id});
     }
     
     sub get_order_items_jbgrid_format_calls {

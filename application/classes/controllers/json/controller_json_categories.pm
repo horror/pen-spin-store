@@ -1,7 +1,6 @@
 package controller_json_categories; {
     use base controller_json_grid_base;
     use model_products;
-    use Switch;
     use strict;
     use utf8;
      

@@ -1,0 +1,1 @@
+{"y_detalisation":"sex","aggregation":"sum","y_axis":"users","x_axis":"periods","name":"fCKGOkOpgvMrcjkHiVFygJUPnDwFeeWZLabdTKHp","x_detalisation":"day","analyze":"price"},

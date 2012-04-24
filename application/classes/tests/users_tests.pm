@@ -47,6 +47,7 @@
 	is($auth->logged_anonymous_user_id(), 0, 'Теперь $auth->logged_anonymous_user_id() должна вернуть 0');
 	ok($model->not_allowed_login('new_user', 0), 'Логин new_user теперь занят');
 	
+	ok(!$auth->login_user($user_info->{login}, '33'), 'Логин с неправильным паролем');
 	ok($auth->login_user($user_info->{login}, $user_info->{password}), 'Логин');
 	($sid_value) = @{$auth->get_cookie_sid()};
 	is($auth->logged_authorized_user_id(), $auth->logged_user_id(), 'после логина $auth->logged_authorized_user_id() и $auth->logged_user_id() должны совпасть');
