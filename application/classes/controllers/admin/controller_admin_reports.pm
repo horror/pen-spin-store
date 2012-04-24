@@ -3,6 +3,7 @@ package controller_admin_reports; {
     use folder_config;
     use strict;
     use JSON;
+    use Win32::Pipe;
     use utf8;
   
     sub new {
@@ -58,9 +59,16 @@ package controller_admin_reports; {
     sub push_report_to_queue() {
         my($self, $json_params) = @_;
         
-        open TASK, ">>" . APP_REPORTS_PATH . "/queue.txt";
-        print TASK $json_params . ",\n";
-        close TASK;
+        my $PipeName = "\\\\.\\pipe\\pdf_gen";
+        
+        if (my $Pipe = Win32::Pipe->new($PipeName)) {
+            $Pipe->Write($json_params);
+            $Pipe->Close();
+        }
+        else {
+            my($Error, $ErrorText) = Win32::Pipe::Error();
+            print "Error:$Error \"$ErrorText\"\n";
+        }
     }
 }
 

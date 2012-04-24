@@ -25,7 +25,7 @@
 
     $('.axises').append($('<option/>', {'value' : 'users', 'text' : 'Пользователи'}));
     $('.axises').append($('<option/>', {'value' : 'products', 'text' : ' Товары и категории'}));
-   // $('.axises').append($('<option/>', {'value' : 'periods', 'text' : 'Время'}));
+    $('.axises').append($('<option/>', {'value' : 'periods', 'text' : 'Время'}));
     
     var user_detail = [
         $('<option/>', {'value' : 'sex', 'text' : 'Пол'}),
@@ -42,6 +42,7 @@
         $('<option/>', {'value' : 'day', 'text' : 'День'}),
         $('<option/>', {'value' : 'week', 'text' : 'Неделя'}),
 	$('<option/>', {'value' : 'month', 'text' : 'Месяц'}),
+	$('<option/>', {'value' : 'year', 'text' : 'Год'}),
     ];
     
     var detail_type = { "users" : user_detail, "products" : product_detail, "periods" : period_detail};

@@ -1,4 +1,4 @@
-#! C:\strawberry\perl\bin\perl.exe -w
+﻿#! C:\strawberry\perl\bin\perl.exe -w
 
 use strict;
 use JSON;
@@ -6,18 +6,14 @@ use PDF::API2;
 use PDF::Table;
 use DBI;
 use SQL::Abstract;
+use Win32::Pipe;
 use utf8;
 
-#Константы
 sub DB_TYPE() {'mysql'};
 sub DB_NAME() {'pen_store'};
 sub DB_USER() {'root'};
 sub DB_PASSWORD() {'c2h5oh'};
 sub TBL_PREFIX() {'ps_'};
-
-sub X_HEADER() {1};
-sub Y_HEADER() {0};
-sub CELL_VALUE() {2};
 
 my $dbh = DBI->connect('DBI:' . DB_TYPE. ':' . DB_NAME,
 		    DB_USER,
@@ -27,43 +23,37 @@ my $dbh = DBI->connect('DBI:' . DB_TYPE. ':' . DB_NAME,
 $dbh->do("SET NAMES 'utf8'");
 $dbh->{'mysql_enable_utf8'} = 1;
 
+my $PipeName = "pdf_gen";
+
 for(;;){
-    open TASK, "+<queue.txt";
-    #Получили данные очереди
-    my $json_task = "[";
-    while (<TASK>){
-        chomp;
-        $json_task .= $_;
+    if (my $Pipe = new Win32::Pipe($PipeName)) {
+	while ($Pipe->Connect()) {
+	    my $json_task = $Pipe->Read();
+	    my $task = JSON->new->utf8->decode($json_task);
+	    my $param_for_SQL = &prepere_param($task);
+	    my $data = &get_data($param_for_SQL);
+	    &gen_report($data, $task->{'name'});
+	    print scalar(localtime) . "Report named '$task->{'name'}' was created\n";
+	    $Pipe->Disconnect();
+	}
+        $Pipe->Close();
     }
-    truncate TASK, 0;
-    close TASK;
-    
-    if ($json_task eq "[") {
-		sleep (3);
-		next;
-	};
-    
-    $json_task =~ s/,[^,]*$/]/g;
-    
-    my $task = JSON->new->utf8->decode($json_task);
-    open LOG, ">>log/activity.log";
-    binmode LOG;
-    foreach my $report(@$task) {
-        my $param_for_SQL = &prepere_param($report);
-        my $data = &get_data($param_for_SQL);
-	&gen_report($data, $report->{'name'});
-        print LOG scalar(localtime) . " Отчет $report->{'name'} создан\n";
-    }
-    
-    close LOG;
 }
 
 sub prepere_param() {
     my $params = shift;
     
-    my $users_fields = {sex => 'u.sex', adress => 'u.adress', name => 'u.login'};
+    my $users_fields = {sex => "IF(u.sex, 'Мужчины', 'Женщины')", adress => 'u.adress', name => 'u.login'};
     my $product_fields = {prod_name => 'p.name', cat_name => 'c.name'};
-    my $detal = {users => $users_fields, products => $product_fields};
+    my $date = 'FROM_UNIXTIME(o.order_date)';
+    my $date_fields = {
+        day => "DATE_FORMAT($date, '%d.%m.%Y')",
+	week => "CONCAT('c ', DATE_FORMAT(DATE_ADD($date, INTERVAL(1-DAYOFWEEK($date)) DAY), '%d.%m.%Y'),
+	    ' по ', DATE_FORMAT(DATE_ADD($date, INTERVAL(7-DAYOFWEEK($date)) DAY), '%d.%m.%Y'))",
+	month => "DATE_FORMAT($date, '%m.%Y')",
+	year => "YEAR($date)"
+    };
+    my $detal = {users => $users_fields, products => $product_fields, periods => $date_fields};
     
     my $agregator = {min => 'MIN', max => 'MAX', sum => 'SUM', avg => 'AVG'};
     my $analize_fields = {price => 'op.price_per_one * op.products_count', count => 'op.products_count'};
@@ -106,7 +96,17 @@ sub gen_report() {
     my $pdftable = new PDF::Table;
     my $pdf = new PDF::API2(-file => "$report_name.pdf");
     my $page = $pdf->page;
-    
+    my $font = $pdf->corefont('Verdana', -encode=> 'windows-1251');
+    my $text = $page->text();
+    $text->font($font, 16);
+    $text->translate(50, 700);
+    #огромный отчет
+    if(@$report > 10)
+    {
+	$text->text('Слишком большой отчет. Измените оси или усильте фильтры');
+	$pdf->saveas();
+	return;
+    }
     my %report_data;
     my @x_axis;
     push @x_axis, '';
@@ -140,11 +140,11 @@ sub gen_report() {
     }
     my $col_props = [
 	{
-	    min_w => 100,       # Minimum column width.
+	    min_w => 60,       # Minimum column width.
 	    max_w => 150,       # Maximum column width.
 	    justify => 'left', # One of left|center|right ,
-	    font => $pdf->corefont('Verdana', -encode=> 'windows-1251'),
-	    font_size => 10,
+	    font => $font,
+	    font_size => 9,
 	    font_color=> '#CCCC99',
 	    background_color => '#336666',
 	}
@@ -153,14 +153,14 @@ sub gen_report() {
     {
         # This param could be a pdf core font or user specified TTF.
         #  See PDF::API2 FONT METHODS for more information
-        font       => $pdf->corefont('Verdana', -encode=> 'windows-1251' ),
-        font_size  => 10,
+        font       => $font,
+        font_size  => 9,
         font_color => '#CCCC99',
         bg_color   => '#336666',
         repeat     => 1,    # 1/0 eq On/Off  if the header row should be repeated to every new page
     };
     
-    my $left_edge_of_table = 50;
+    my $left_edge_of_table = 30;
     # build the table layout
     $pdftable->table(
 	# required params
@@ -173,8 +173,8 @@ sub gen_report() {
 	next_y  => 700,
 	start_h => 300,
 	next_h  => 500,
-	font => $pdf->corefont('Verdana', -encode=> 'windows-1251'),
-	# some optional params
+	font => $font,
+	font_size  => 8,
 	padding => 5,
 	padding_right => 10,
 	background_color_odd  => "gray",
