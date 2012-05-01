@@ -30,7 +30,7 @@ package model_discussion; {
 	
 	my $response = $self->db->select_and_fetchall_arrayhashesref_without_abstract($stmt, $bind);
 
-	return [map {$_->{content} = ($_->{deleted}) ? 'Коментарий удален' : markdown($_->{content}); $_;} @$response];
+	return [map {$_->{content} = ($_->{deleted}) ? '<p>Коментарий удален</p>' : markdown($_->{content}); $_;} @$response];
     }
     
     sub add_comment {

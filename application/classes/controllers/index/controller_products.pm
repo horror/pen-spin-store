@@ -37,7 +37,7 @@ package controller_products; {
 	$self->add_template_scripts([
 	    APP_JS_TEXT_EDITOR_PATH . __DM . 'jquery.markitup.js',
 	    APP_JS_TEXT_EDITOR_PATH . __DM . 'set.js',
-	    APP_JS_TEXT_EDITOR_PATH . __DM . 'linking_comment_form.js',
+	    APP_JS_PATH . __DM . 'comment_form.js',
 	]);
 	
 	$self->add_template_styles([
