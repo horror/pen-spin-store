@@ -10,7 +10,7 @@
 		    [% IF admin_role && !comment.deleted %]<a href="index.pl?controller=products&action=del_comment&id=[% product_id %]&comment_id=[% comment.id %]#[% comment.id %]">удалить</a>[% END %]
 		[% END %]
 	    </header>
-	    <p>[% comment.content %]</p>
+	    [% comment.content %]
 	</article>
     [% END %]
 </section>

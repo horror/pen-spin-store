@@ -1,5 +1,6 @@
 package model_discussion; {
     use base fw_model;
+    use Text::Markdown qw/markdown/;
     use Class::InsideOut qw/:std/;
     use utf8;
     
@@ -28,7 +29,8 @@ package model_discussion; {
 	    ORDER BY concat(d.path, LPAD(d.id, 6, '0'))";
 	
 	my $response = $self->db->select_and_fetchall_arrayhashesref_without_abstract($stmt, $bind);
-	return [map {$_->{content} = 'Коментарий удален' if $_->{deleted}; $_;} @$response];
+
+	return [map {$_->{content} = ($_->{deleted}) ? 'Коментарий удален' : markdown($_->{content}); $_;} @$response];
     }
     
     sub add_comment {

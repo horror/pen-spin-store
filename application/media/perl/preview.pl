@@ -1,13 +1,9 @@
 #! C:\strawberry\perl\bin\perl.exe -w
 
-use Text::Markdown;
-use CGI 3.47;
+use Text::Markdown qw(markdown);
+use CGI 3.47 qw(param header);
 use strict;
 
-my $q = CGI->new;
-my $text = $q->param('data');
-my $m = Text::Markdown->new;
-my $html = $m->markdown($text);
+print header(-type => "text/plain", -charset => "utf-8");
+print markdown(param('data'));
 
-print $q->header(-type => "text/plain", -charset => "utf-8");
-print $html;
