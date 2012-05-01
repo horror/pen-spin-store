@@ -24,6 +24,7 @@ our @EXPORT = qw(
     APP_JSON_PATH
     APP_CSS_PATH
     APP_JS_PATH
+    APP_JS_TEXT_EDITOR_PATH
     APP_IMG_PATH
     APP_PRODUCTS_IMG_PATH
     ROOT_PATH
@@ -55,6 +56,7 @@ sub APP_WIDGETS_PATH() {APP_CONTROLLERS_PATH . __DM . 'widgets'};
 sub APP_JSON_PATH() {APP_CONTROLLERS_PATH . __DM . 'json'};
 sub APP_CSS_PATH() {'./application/media/css'};
 sub APP_JS_PATH() {'./application/media/js'};
+sub APP_JS_TEXT_EDITOR_PATH() {APP_JS_PATH . __DM . 'text_editor'};
 sub APP_IMG_PATH() {'./application/media/img'};
 sub APP_PRODUCTS_IMG_PATH() {APP_IMG_PATH . __DM . 'products'};
 sub ROOT_PATH() {'http://localhost/'};

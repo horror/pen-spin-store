@@ -34,6 +34,17 @@ package controller_products; {
     sub action_detailes {
         my $self = shift;
 	
+	$self->add_template_scripts([
+	    APP_JS_TEXT_EDITOR_PATH . __DM . 'jquery.markitup.js',
+	    APP_JS_TEXT_EDITOR_PATH . __DM . 'set.js',
+	    APP_JS_TEXT_EDITOR_PATH . __DM . 'linking_comment_form.js',
+	]);
+	
+	$self->add_template_styles([
+	    APP_CSS_PATH . __DM . 'style_markitup_skins.css',
+	    APP_CSS_PATH . __DM . 'style_murkitup!.css',
+	]);
+	
 	my $prod_images = model_products->new($self->database_handler(), $self->lang())
 	    ->get_product_images_by_id($self->request->{'id'});
 	my $prod_info = model_products->new($self->database_handler(), $self->lang())

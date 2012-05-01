@@ -117,6 +117,12 @@
         $self->template_scripts(\@_scripts);
     }
     
+    sub add_template_styles {
+        my ($self, $styles) = @_;
+        my @_styles = (defined $self->template_styles()) ? (@{$self->template_styles()}, @$styles) : @$styles;
+        $self->template_styles(\@_styles);
+    }
+    
     sub template_settings {
         my($self, $type, $name, $params, $styles, $scripts) = @_;
         $self->template_type($type);
