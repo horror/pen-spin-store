@@ -48,11 +48,17 @@
             
         $self->database_handler($dbh);
         $self->lang(russian->new());
+        
+        $self->before();
         return $self;
     }
+        
+    sub before {};
+    
+    sub after {};
     
     sub render {
-        my($self) = shift;
+        my $self = shift;
         binmode(STDOUT, ":utf8");
         
         $self->set_cookies('sid', $self->cookies->{sid}->{value}); #ПОЧЕМУ ТЕРЯЕЦА ВРЕМЯ КУКОВ?!!
@@ -62,10 +68,12 @@
         );
         print $self->execute();
     }
-    
+
     sub execute {
         my $self = shift;
         
+        $self->after();
+
         return fw_view
             ->new($self->template_type(), $self->template_name(),
                   $self->template_params(), $self->template_styles(),
@@ -75,9 +83,11 @@
     }
     
     sub redirection {
-        my ($self, $controller, $action) = @_;
+        my ($self, $controller, $action, $other_params) = @_;
         my $url = ROOT_PATH . "index.pl?controller=$controller&action=$action";
-        
+        foreach my $key(keys %$other_params) {
+            $url .= "&$key=$other_params->{$key}";
+        }
         $self->set_cookies('sid', $self->cookies->{sid}->{value});
         
         print redirect(        
@@ -119,7 +129,6 @@
     sub upload {
         my($self, $stream, $file_path) = @_;
         
-        #copy($stream, $file_path);
         open UPLOADFILE, ">$file_path";
         
         binmode UPLOADFILE;

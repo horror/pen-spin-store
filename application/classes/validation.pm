@@ -68,6 +68,19 @@
 	return (@messages) ? \@messages : \%product_info;
     }
     
+    sub validate_comment_form {
+        my $self = shift;
+	my @ext_fields  = qw\product_id comment_id comment_path content\;
+	my @req_fields  = qw\product_id parent_id path content\;
+	
+	my %comment_info;
+        my @comment_values = @{$self->data()}{@ext_fields};
+        
+        @comment_info{@req_fields} = @comment_values;
+	
+	return \%comment_info;
+    }
+    
 
 }
 

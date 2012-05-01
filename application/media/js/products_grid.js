@@ -1,4 +1,4 @@
-function gen_table() {
+﻿function gen_table() {
     $('#category_id').val($.jCookies({ get : 'cat_id' }));
     jQuery("#products_grid").jqGrid({
    	url: 'index.pl?controller=json_products&action=get&cat_id=' + $.jCookies({ get : 'cat_id' }),

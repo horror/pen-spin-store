@@ -5,6 +5,6 @@
 [% END %]
 </ul>
 <table id="product_table">
-     <tr><td>Цена: [% product_info.price %] $</td></tr>
-     <tr><td>Описание: [% product_info.description %]</td></tr>
+     <tr><td><strong>Цена:</strong> [% product_info.price %] $</td></tr>
+     <tr><td><strong>Описание:</strong> [% product_info.description %]</td></tr>
 </table>

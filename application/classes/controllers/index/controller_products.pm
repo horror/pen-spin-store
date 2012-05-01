@@ -2,7 +2,10 @@ package controller_products; {
     use base controller_base_index;
     use folder_config;
     use model_products;
+    use widget_discussion_displayer;
+    use widget_discussion_comment_form;
     use strict;
+    use auth;
     use utf8;
   
     sub new {
@@ -30,23 +33,65 @@ package controller_products; {
     
     sub action_detailes {
         my $self = shift;
-        
+	
 	my $prod_images = model_products->new($self->database_handler(), $self->lang())
-	        ->get_product_images_by_id($self->request->{'id'});
+	    ->get_product_images_by_id($self->request->{'id'});
 	my $prod_info = model_products->new($self->database_handler(), $self->lang())
-	        ->get_product_info_by_id($self->request->{'id'});
+            ->get_product_info_by_id($self->request->{'id'});
+	my $auth = auth->new($self->cookies(), $self->database_handler());
+	    
+	my $w_discuss = widget_discussion_displayer->new(
+	    $self->request(), $self->cookies(), $self->database_handler(),
+	    $self->request->{'id'}, $auth->logged_user_id()
+	);
+	
+	my $path = ($self->request->{'comment_id'}) ?
+	    $self->request->{'comment_path'}.
+	    add_leading_zeros($self->request->{'comment_id'}).'.'
+	    : $self->request->{'comment_path'};
+	$w_discuss->extract_comments(
+	    $self->request->{'comment_id'},
+	    $path,
+	    $auth->logged_admin_id(),
+	);
+	
         $self->add_template_params({
             page_title => $self->lang->PRODUCTS_DETAILES_PAGE_TITLE,
             center_block => [
                 fw_view->new('index', 'product_detailes.tpl', {
 		    product_info => $prod_info,
 		    product_images => $prod_images,
-		})->execute()
+		})->execute(),
+		$w_discuss->execute(),
             ]
         });
     }
     
+    sub action_add_comment {
+	my $self = shift;
+	
+	my $user_id = auth->new($self->cookies(), $self->database_handler())
+	    ->logged_authorized_user_id();
+	    
+	widget_discussion_comment_form->new(
+	    $self->request(), $self->cookies(), $self->database_handler()
+	)->add_comment($user_id)
+	if $user_id;
+    }
+    
+    sub action_del_comment {
+	my $self = shift;
+
+	widget_discussion_comment_form->new(
+	    $self->request(), $self->cookies(), $self->database_handler()
+	)->del_comment() if auth->new($self->cookies(), $self->database_handler())
+	    ->logged_admin_id();
+    }
  
+    sub add_leading_zeros {
+	my $x = shift;
+	return sprintf "%06d", $x
+    }
 }
 
 1;

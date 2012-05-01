@@ -26,13 +26,35 @@ $dbh->{'mysql_enable_utf8'} = 1;
 my $PipeName = "pdf_gen";
 
 for(;;){
+    my $rus_axis_aliases = {
+	sex => 'Пол',
+	adress => 'Адрес',
+	name => 'Имя пользователя',
+	prod_name => 'Название продукта',
+	cat_name => 'Категория',
+	day => 'Дни',
+	week => 'Недели',
+	month => 'Месяц',
+	year => 'Год',
+    };
+    
+    my $agr = {
+	sum => 'по сумме',
+	min => 'по минимальному значению',
+	max => 'по максимальному значению',
+	avg => 'по среднему значению',
+    };
+    
     if (my $Pipe = new Win32::Pipe($PipeName)) {
 	while ($Pipe->Connect()) {
 	    my $json_task = $Pipe->Read();
 	    my $task = JSON->new->utf8->decode($json_task);
 	    my $param_for_SQL = &prepere_param($task);
 	    my $data = &get_data($param_for_SQL);
-	    &gen_report($data, $task->{'name'});
+	    &gen_report($data, $task->{'name'}, $task->{analyze},
+	        $rus_axis_aliases->{$task->{x_detalisation}}, $rus_axis_aliases->{$task->{y_detalisation}},
+		$agr->{$task->{aggregation}}
+	    );
 	    print scalar(localtime) . "Report named '$task->{'name'}' was created\n";
 	    $Pipe->Disconnect();
 	}
@@ -48,7 +70,8 @@ sub prepere_param() {
     my $date = 'FROM_UNIXTIME(o.order_date)';
     my $date_fields = {
         day => "DATE_FORMAT($date, '%d.%m.%Y')",
-	week => "CONCAT('c ', DATE_FORMAT(DATE_ADD($date, INTERVAL(1-DAYOFWEEK($date)) DAY), '%d.%m.%Y'),
+	week => "CONCAT(
+	    'c '  , DATE_FORMAT(DATE_ADD($date, INTERVAL(1-DAYOFWEEK($date)) DAY), '%d.%m.%Y'),
 	    ' по ', DATE_FORMAT(DATE_ADD($date, INTERVAL(7-DAYOFWEEK($date)) DAY), '%d.%m.%Y'))",
 	month => "DATE_FORMAT($date, '%m.%Y')",
 	year => "YEAR($date)"
@@ -58,28 +81,63 @@ sub prepere_param() {
     my $agregator = {min => 'MIN', max => 'MAX', sum => 'SUM', avg => 'AVG'};
     my $analize_fields = {price => 'op.price_per_one * op.products_count', count => 'op.products_count'};
     
-    return {
+     my $filter_patterns = {
+	    eq => { '=' => '%d' },
+	    ne => { '!=' => '%d' },
+	    lt => { '<' => '%d' },
+	    le => { '<=' => '%d' },
+	    gt => { '>' => '%d' },
+	    ge => { '>=' => '%d' },
+	    bw => {-like => '%s%%' },
+	    bn => {-not_like => '%s%%' },
+	    ew => {-like => '%%%s%' },
+	    en => {-not_like => '%%%s%' },
+	    cn => {-like => '%%%s%%' },
+	    nc => {-not_like => '%%%s%%' },
+	};
+     
+    my $prereared_data = {
         x_field => $detal->{$params->{x_axis}}->{$params->{x_detalisation}},
 	y_field => $detal->{$params->{y_axis}}->{$params->{y_detalisation}},
 	agregator => $agregator->{$params->{aggregation}},
 	analized_field => $analize_fields->{$params->{analyze}},
     };
+    
+    make_filter($prereared_data, 'x_filter', $filter_patterns->{$params->{x_filter_cond}}, $params->{x_filter});
+    make_filter($prereared_data, 'y_filter', $filter_patterns->{$params->{y_filter_cond}}, $params->{y_filter});
+    
+    
+    return $prereared_data;
+}
+
+sub make_filter {
+    my ($prereared_data, $filter_name, $filter_pattern, $filter_value) = @_;
+    
+    return unless $filter_value;
+    
+    my ($key) = keys %$filter_pattern;
+    $prereared_data->{$filter_name}->{$key} = sprintf($filter_pattern->{$key}, $filter_value);
 }
 
 sub get_data() {
     my $params = shift;
     
+    my $sql = SQL::Abstract->new();
+    my($stmt_w, @bind_w) = $sql->where({ map {
+	$params->{"${_}filter"} ? ($params->{"${_}field"} => $params->{"${_}filter"}) : () } qw(x_ y_)
+    });
     my $stmt = "SELECT $params->{'x_field'}, $params->{'y_field'}, $params->{'agregator'}($params->{'analized_field'}) 
 	FROM ps_orders_products_href op 
 	LEFT JOIN ps_orders o on op.order_id = o.id
 	LEFT JOIN ps_users u on o.user_id = u.id
 	LEFT JOIN ps_products p on p.id = op.product_id
 	LEFT JOIN ps_categories c on c.id = p.category_id
+	$stmt_w
 	GROUP BY $params->{'x_field'}, $params->{'y_field'}
 	ORDER BY $params->{'x_field'}, $params->{'y_field'}";
 	
     my $sth = $dbh->prepare($stmt);
-    $sth->execute();
+    $sth->execute(@bind_w);
     
     return $sth->fetchall_arrayref() 
 }
@@ -87,11 +145,11 @@ sub get_data() {
 sub in_array {
      my ($arr,$search_for) = @_;
      my %items = map {$_ => 1} @$arr;
-     return (exists($items{$search_for}))?1:0;
+     return exists $items{$search_for} ? 1 : 0;
 }
 
 sub gen_report() {
-    my ($report, $report_name) = @_;
+    my ($report, $report_name, $analize_field, $x_alias, $y_alias, $agregation) = @_;
     
     my $pdftable = new PDF::Table;
     my $pdf = new PDF::API2(-file => "$report_name.pdf");
@@ -99,24 +157,28 @@ sub gen_report() {
     my $font = $pdf->corefont('Verdana', -encode=> 'windows-1251');
     my $text = $page->text();
     $text->font($font, 16);
-    $text->translate(50, 700);
+    $text->translate(50, 770);
     #огромный отчет
-    if(@$report > 10)
-    {
-	$text->text('Слишком большой отчет. Измените оси или усильте фильтры');
-	$pdf->saveas();
-	return;
-    }
+    
     my %report_data;
     my @x_axis;
     push @x_axis, '';
     my @y_axis;
     push @y_axis, '';
     for my $row(@$report) {
-        $report_data{$row->[0]}{$row->[1]} = $row->[2];
+        $report_data{$row->[0]}{$row->[1]} = $row->[2] . ($analize_field eq 'price' ? ' $' : ' шт.');
 	push @x_axis, $row->[1] unless in_array(\@x_axis, $row->[1]);
 	push @y_axis, $row->[0] unless in_array(\@y_axis, $row->[0]);
     };
+    
+    if(@x_axis > 10)
+    {
+	$text->text('Слишком большой отчет. Измените оси или усильте фильтры');
+	$pdf->saveas();
+	return;
+    }
+    my $header = sprintf('Отчет %s %s товаров', $agregation, ($analize_field eq 'price' ? 'цен' : 'количеству'));
+    $text->text($header);
     
     for my $key(sort keys %report_data) {
         my @values = @{$report_data{$key}}{@x_axis};
@@ -138,6 +200,8 @@ sub gen_report() {
     for my $i(0..@y_axis - 1) {
        $rd[$i][0] = $y_axis[$i];
     }
+    
+    $rd[0][0] = "$x_alias \\ $y_alias";
     my $col_props = [
 	{
 	    min_w => 60,       # Minimum column width.

@@ -49,7 +49,7 @@ package controller_admin_reports; {
     sub get_report_params() {
         my $self = shift;
         
-        my @param_k = qw(x_axis y_axis x_detalisation y_detalisation analyze aggregation);
+        my @param_k = qw(x_axis y_axis x_detalisation y_detalisation x_filter_cond y_filter_cond x_filter y_filter analyze aggregation);
         my @param_v = @{$self->request()}{@param_k};
         my %report_params;
         @report_params{@param_k} = @param_v;

@@ -110,6 +110,31 @@
     overflow: scroll;
 }
 
+#comments {
+    clear: both;
+}
+
+#comments p{
+    padding: 10px 20px 30px 0px;
+}
+
+.comment_header {
+    height: 35px;
+    background-color: gainsboro;
+}
+
+.comment_header h1{
+    margin: 0;
+    color: #004352;
+    font: 14px Calibri, Arial, Helvetica, sans-serif;
+}
+
+.comment_header a{
+    color: #004352;
+    font: 11px Verdana, Arial, Helvetica, sans-serif;
+    text-decoration: underline;
+}
+
 #product_images {
     list-style-type: none;
     float: left;
@@ -123,4 +148,9 @@
 #product_table {
     width: 60%;
     float: right;
+    margin: 10px;
+}
+
+#product_table td{
+    padding: 10px;
 }
