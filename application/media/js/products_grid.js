@@ -108,7 +108,7 @@ function nameFormatter(cellValue, opts, rowObject) {
 
 function cartFormatter(cellValue, opts, rowObject) {
     return "<form action='index.pl?controller=cart&action=set&oper=add' method='post'>" +
-        "<label for='p_cnt'>Количество</label><input id='p_cnt' name='product_count' type='number' value='1'/>" +
+        "<label for='p_cnt'>Количество</label><input id='p_cnt' name='product_count' type='number' min='1' value='1'/>" +
 	"<input type='hidden' name='product_id' value='" + rowObject[0] + "'>" +
 	"<input type='hidden' name='product_price' value='" + rowObject[4] + "'>" +
 	"<input type='hidden' name='oper' value='add'>" +

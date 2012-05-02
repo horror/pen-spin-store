@@ -11,7 +11,7 @@ $(document).ready(function()	{
 	return formatted;
     };
     
-    $(".comment_response").click(function (e) {
+    $(".comment_response").live("click", function (e) {
 	e.preventDefault();
 	var ref = $(this).attr('href');
 	var comment_id = ref.match(/comment_id=(\d+)/)[1];
@@ -20,5 +20,6 @@ $(document).ready(function()	{
 	$('#form_comment_path').val(comment_path + comment_id.lead_6_zero() + '.');
 	$('body,html').animate({ scrollTop: $(document).height() - $(window).height()}, 'slow');
     });
+    
     
 });

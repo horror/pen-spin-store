@@ -38,6 +38,8 @@ package controller_products; {
 	    APP_JS_TEXT_EDITOR_PATH . __DM . 'jquery.markitup.js',
 	    APP_JS_TEXT_EDITOR_PATH . __DM . 'set.js',
 	    APP_JS_PATH . __DM . 'comment_form.js',
+	    APP_JS_PATH . __DM . 'jquery.tmpl.js',
+	    APP_JS_PATH . __DM . 'comment_display.js',
 	]);
 	
 	$self->add_template_styles([
@@ -60,10 +62,14 @@ package controller_products; {
 	    $self->request->{'comment_path'}.
 	    add_leading_zeros($self->request->{'comment_id'}).'.'
 	    : $self->request->{'comment_path'};
+	    
+	my $expand_lvl = $self->request->{'expand_radical'} // $self->request->{'expand_level'} // 3;
+	
 	$w_discuss->extract_comments(
 	    $self->request->{'comment_id'},
 	    $path,
 	    $auth->logged_admin_id(),
+	    $expand_lvl,
 	);
 	
         $self->add_template_params({

@@ -112,6 +112,11 @@
 
 #comments {
     clear: both;
+    border-width: 1px;
+    padding: 1px;
+    border-style: solid;
+    border-color: lavender;
+    background-color: transparent;
 }
 
 #comments p{
@@ -153,4 +158,8 @@
 
 #product_table td{
     padding: 10px;
+}
+
+#expand_level_form {
+    clear: both;
 }

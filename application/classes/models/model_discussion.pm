@@ -14,6 +14,12 @@ package model_discussion; {
         return $self;
     }
     
+    sub parse_markdown_comments {
+	my ($self, $comments) = @_;
+	
+	return [map {$_->{content} = ($_->{deleted}) ? '<p><em>Коментарий удален</em></p>' : markdown($_->{content}); $_;} @$comments];
+    }
+    
     sub get_prod_coments {
 	my ($self, $prod_id, $show_level, $comment_path, $comment_id) = @_;
 	
@@ -28,9 +34,21 @@ package model_discussion; {
 	    WHERE $where
 	    ORDER BY concat(d.path, LPAD(d.id, 6, '0'))";
 	
-	my $response = $self->db->select_and_fetchall_arrayhashesref_without_abstract($stmt, $bind);
-
-	return [map {$_->{content} = ($_->{deleted}) ? '<p>Коментарий удален</p>' : markdown($_->{content}); $_;} @$response];
+	return $self->parse_markdown_comments($self->db->select_and_fetchall_arrayhashesref_without_abstract($stmt, $bind));
+    }
+    
+    sub get_comments_branch {
+	my ($self, $product_id, $comment_path) = @_;
+	
+	my $stmt = "SELECT DISTINCT d.id, u.name as user_name, d.content, d.time, d.path, d.level, d.deleted
+	    FROM ps_discussion d
+	    INNER JOIN ps_users u on u.id = d.user_id
+	    WHERE d.product_id = ? and d.path LIKE ? and d.path <> ?
+	    ORDER BY concat(d.path, LPAD(d.id, 6, '0'))";
+	    
+	my $bind = [$product_id, $comment_path . '%', $comment_path];
+	
+	return $self->parse_markdown_comments($self->db->select_and_fetchall_arrayhashesref_without_abstract($stmt, $bind));
     }
     
     sub add_comment {

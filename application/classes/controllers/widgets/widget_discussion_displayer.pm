@@ -25,7 +25,7 @@ package widget_discussion_displayer; {
     }
     
     sub	extract_comments {
-	my ($self, $comment_id, $comment_path, $admin_role) = @_;
+	my ($self, $comment_id, $comment_path, $admin_role, $expand_lvl) = @_;
 	
 	$self->form->add_template_params({
 	    comment_id => $comment_id,
@@ -33,13 +33,14 @@ package widget_discussion_displayer; {
 	});
 	
 	$comment_path = -1 if $comment_id || !$comment_path;
-	my $comments = model_discussion->new($self->database_handler())
-	    ->get_prod_coments($self->prod_id(), 3, $comment_path, $comment_id);
+	my $comments = ($expand_lvl) ? model_discussion->new($self->database_handler())
+	    ->get_prod_coments($self->prod_id(), $expand_lvl, $comment_path, $comment_id) : [];
 	
 	$self->add_template_params({
 	    comments => $comments,
 	    comment_cnt => scalar(@$comments),
-	    admin_role => $admin_role
+	    admin_role => $admin_role,
+	    expand_level => $expand_lvl,
 	});
 	
     }
