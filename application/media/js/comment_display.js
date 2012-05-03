@@ -26,8 +26,14 @@
 	    'json'
 	);
     });
-    $("#expand_level").click(function () {
-	$("#expand_all").prop("checked", false);
-	$("#expand_no").prop("checked", false);
+    
+    $("#expand_all").click(function () {
+	$("#expand_level").attr('disabled', true);
+    });
+    $("#expand_no").click(function () {
+	$("#expand_level").attr('disabled', true);
+    });
+    $("#expand_manual").click(function () {
+	$("#expand_level").removeAttr('disabled');
     });
 });

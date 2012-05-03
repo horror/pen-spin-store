@@ -69,7 +69,8 @@ package controller_products; {
 	    add_leading_zeros($self->request->{'comment_id'}).'.'
 	    : $self->request->{'comment_path'};
 	    
-	my $expand_lvl = $self->request->{'expand_radical'} // $self->request->{'expand_level'} // 3;
+	my $expand_lvl = ($self->request->{'expand_radical'} eq 'manual') ? $self->request->{'expand_level'} :
+	    ((defined $self->request->{'expand_radical'}) ? $self->request->{'expand_radical'} : 3);
 	
 	$w_discuss->extract_comments(
 	    $self->request->{'comment_id'},

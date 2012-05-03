@@ -3,13 +3,15 @@
 	<table><tr>
 	<td>
 	    <label for="expand_level">Отображаемая вложенность: </label>
-	    <input type="number" id="expand_level" name="expand_level" min="0" max="100" value="[% expand_level %]"/>
+	    <input type="number" id="expand_level" name="expand_level" min="0" max="100" value="[% expand_level %]" [% IF expand_level == 100 || expand_level == 0 %] disabled="disabled" [% END %] />
 	</td>
 	<td align="right" width=300>
 	    <label for="expand_all">Отобразить все комментарии</label>
 	    <input type="radio" id="expand_all" name="expand_radical" name="all" value="100" [% IF expand_level == 100 %] checked [% END %] />
-	    <label for="expand_no">Скрыть комментарии</label>
+	    <label for="expand_no">Скрыть все комментарии</label>
 	    <input type="radio" id="expand_no" name="expand_radical" value="0" [% IF expand_level == 0 %] checked [% END %]  />
+	    <label for="expand_manual">Отобразить произв. уровень</label>
+	    <input type="radio" id="expand_manual" name="expand_radical" value="manual" [% IF expand_level > 0 && expand_level < 100  %] checked [% END %] />
 	</td>
 	<td>
 	    <input type="submit" value="Применить">
