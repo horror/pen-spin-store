@@ -3,7 +3,7 @@ package controller_products; {
     use folder_config;
     use model_products;
     use widget_discussion_displayer;
-    use widget_discussion_comment_form;
+    use widget_product_rating;
     use strict;
     use auth;
     use utf8;
@@ -40,22 +40,27 @@ package controller_products; {
 	    APP_JS_PATH . __DM . 'comment_form.js',
 	    APP_JS_PATH . __DM . 'jquery.tmpl.js',
 	    APP_JS_PATH . __DM . 'comment_display.js',
+	    APP_JS_PATH . __DM . 'jquery.rating.js',
+	    APP_JS_PATH . __DM . 'product_rating.js',
 	]);
 	
 	$self->add_template_styles([
 	    APP_CSS_PATH . __DM . 'style_markitup_skins.css',
 	    APP_CSS_PATH . __DM . 'style_murkitup!.css',
+	    APP_CSS_PATH . __DM . 'style_rating.css',
 	]);
 	
 	my $prod_images = model_products->new($self->database_handler(), $self->lang())
 	    ->get_product_images_by_id($self->request->{'id'});
 	my $prod_info = model_products->new($self->database_handler(), $self->lang())
             ->get_product_info_by_id($self->request->{'id'});
+	my $prod_rating = model_products->new($self->database_handler(), $self->lang())
+            ->show_rating($self->request->{'id'});
 	my $auth = auth->new($self->cookies(), $self->database_handler());
 	    
 	my $w_discuss = widget_discussion_displayer->new(
 	    $self->request(), $self->cookies(), $self->database_handler(),
-	    $self->request->{'id'}, $auth->logged_user_id()
+	    $self->request->{'id'}, $auth->logged_authorized_user_id()
 	);
 	
 	my $path = ($self->request->{'comment_id'}) ?
@@ -72,13 +77,21 @@ package controller_products; {
 	    $expand_lvl,
 	);
 	
+	my $w_product_rating_exec;
+	if ($auth->logged_authorized_user_id()) {
+	    my $w_product_rating = widget_product_rating->new($self->request(), $self->cookies(), $self->database_handler(), $self->request->{'id'});
+	    $w_product_rating_exec = $w_product_rating->execute();
+	}
+	
         $self->add_template_params({
             page_title => $self->lang->PRODUCTS_DETAILES_PAGE_TITLE,
             center_block => [
                 fw_view->new('index', 'product_detailes.tpl', {
 		    product_info => $prod_info,
 		    product_images => $prod_images,
+		    product_rating => $prod_rating->{'AVG(rating)'},
 		})->execute(),
+		$w_product_rating_exec,
 		$w_discuss->execute(),
             ]
         });
@@ -108,6 +121,16 @@ package controller_products; {
     sub add_leading_zeros {
 	my $x = shift;
 	return sprintf "%06d", $x
+    }
+    
+    sub action_class {
+	my $self = shift;
+    
+	widget_product_rating->new($self->request(), $self->cookies(), $self->database_handler())
+	    ->class_prod(
+		auth->new($self->cookies(), $self->database_handler())
+		    ->logged_user_id()
+	    );
     }
 }
 

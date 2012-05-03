@@ -30,7 +30,7 @@ package widget_discussion_displayer; {
 	$self->form->add_template_params({
 	    comment_id => $comment_id,
 	    comment_path => $comment_path
-	});
+	}) if $self->comment_form_need();
 	
 	$comment_path = -1 if $comment_id || !$comment_path;
 	my $comments = ($expand_lvl) ? model_discussion->new($self->database_handler())

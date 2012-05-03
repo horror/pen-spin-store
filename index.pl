@@ -25,7 +25,7 @@ my $controller_name = 'controller_'
 my $action = $q->url_param('action') ? $q->url_param('action') : DEFAULT_ROUTE_ACTION;
 
 eval {
-require "$controller_name.pm";
+    require "$controller_name.pm";
 };
 
 if ($@) {
@@ -36,8 +36,8 @@ if ($@) {
 my $controller = $controller_name->new(\%_params, \%_cookies, \@_files);
 
 eval {
-{no warnings 'once';
-"${controller_name}::action_$action"->($controller);};
+    {no warnings 'once';
+    "${controller_name}::action_$action"->($controller);};
 };
 
 if ($@) {

@@ -170,6 +170,18 @@ package model_products; {
         my($self, $id) = @_;
         $self->fw_database_handler->delete('categories', { id => $product_id });
     }
+    
+    sub add_rating {
+        my($self, $rate_info) = @_;
+        
+        $self->fw_database_handler->insert('product_rating', $rate_info);
+    }
+    
+    sub show_rating {
+        my($self, $product_id) = @_;
+        
+        return $self->fw_database_handler->select_and_fetchrow_hashref('product_rating', 'product_id', ['product_id', 'AVG(rating)'], {product_id => $product_id, });
+    }
 }
 
 1;

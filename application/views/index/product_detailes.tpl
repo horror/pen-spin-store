@@ -6,5 +6,6 @@
 </ul>
 <table id="product_table">
      <tr><td><strong>Цена:</strong> [% product_info.price %] $</td></tr>
+     [% IF product_rating %]<tr><td><strong>Оценка:</strong> [% product_rating %] балл</td></tr>[% END %]
      <tr><td><strong>Описание:</strong> [% product_info.description %]</td></tr>
 </table>
