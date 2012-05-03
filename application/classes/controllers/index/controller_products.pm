@@ -91,7 +91,7 @@ package controller_products; {
                 fw_view->new('index', 'product_detailes.tpl', {
 		    product_info => $prod_info,
 		    product_images => $prod_images,
-		    product_rating => $prod_rating->{'AVG(rating)'},
+		    product_rating => sprintf("%.2f", $prod_rating->{'AVG(rating)'}),
 		})->execute(),
 		$w_product_rating_exec,
 		$w_discuss->execute(),
