@@ -182,6 +182,12 @@ package model_products; {
         
         return $self->fw_database_handler->select_and_fetchrow_hashref('product_rating', 'product_id', ['product_id', 'AVG(rating)'], {product_id => $product_id, });
     }
+    
+    sub user_already_rate {
+        my($self, $user_id) = @_;
+        
+        return $self->fw_database_handler->select_num_rows('product_rating', {user_id => $user_id});
+    }
 }
 
 1;

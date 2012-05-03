@@ -50,13 +50,14 @@ package controller_products; {
 	    APP_CSS_PATH . __DM . 'style_rating.css',
 	]);
 	
-	my $prod_images = model_products->new($self->database_handler(), $self->lang())
-	    ->get_product_images_by_id($self->request->{'id'});
-	my $prod_info = model_products->new($self->database_handler(), $self->lang())
-            ->get_product_info_by_id($self->request->{'id'});
-	my $prod_rating = model_products->new($self->database_handler(), $self->lang())
-            ->show_rating($self->request->{'id'});
 	my $auth = auth->new($self->cookies(), $self->database_handler());
+	
+	my $m_products = model_products->new($self->database_handler(), $self->lang());
+	
+	my $prod_images = $m_products->get_product_images_by_id($self->request->{'id'});
+	my $prod_info = $m_products->get_product_info_by_id($self->request->{'id'});
+	my $prod_rating = $m_products->show_rating($self->request->{'id'});
+	my $already_rated = $m_products->user_already_rate($auth->logged_authorized_user_id());
 	    
 	my $w_discuss = widget_discussion_displayer->new(
 	    $self->request(), $self->cookies(), $self->database_handler(),
@@ -78,7 +79,7 @@ package controller_products; {
 	);
 	
 	my $w_product_rating_exec;
-	if ($auth->logged_authorized_user_id()) {
+	if ($auth->logged_authorized_user_id() && !$already_rated) {
 	    my $w_product_rating = widget_product_rating->new($self->request(), $self->cookies(), $self->database_handler(), $self->request->{'id'});
 	    $w_product_rating_exec = $w_product_rating->execute();
 	}
