@@ -18,7 +18,8 @@ $(document).ready(function()	{
 	var comment_path = ref.match(/comment_path=(.+)/)[1];
 	$('#form_comment_id').val(comment_id);
 	$('#form_comment_path').val(comment_path + comment_id.lead_6_zero() + '.');
-	$('body,html').animate({ scrollTop: $(document).height() - $(window).height()}, 'slow');
+	var article = $(this).parent().parent();
+	$('#comment_form').insertAfter(article);
     });
     
     
