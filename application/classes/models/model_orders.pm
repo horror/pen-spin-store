@@ -67,7 +67,7 @@ package model_orders; {
     sub get_orders_jbgrid_format_calls {
         my($self, $user_id, $order_field, $order_direction, $limit, $start) = @_;
 	
-	my $stmt = "SELECT o.id, u.login, o.products_cnt, o.total_price, o.status
+	my $stmt = "SELECT o.id, u.login, o.products_cnt, o.total_price, o.status, o.address
 	    FROM ps_orders o
 	    INNER JOIN ps_users u on o.user_id = u.id";
 	$stmt .= " WHERE user_id = ?" if $user_id;
@@ -223,6 +223,12 @@ package model_orders; {
 	$self->fw_database_handler->update('orders', {status => $status},{id => $order_id});
     }
     
+    sub change_order_status_add_address {
+        my($self, $order_id, $status, $address) = @_;
+	
+	$self->fw_database_handler->update('orders', {status => $status, address => $address}, {id => $order_id});
+    }
+    
     sub delete_order {
         my($self, $order_id) = @_;
 	
@@ -251,6 +257,11 @@ package model_orders; {
     sub change_order_status_by_user_id {
         my($self, $user_id, $status) = @_;
 	$self->change_order_status($self->get_card_id($user_id), $status);
+    }
+    
+    sub change_order_status_add_address_by_user_id {
+        my($self, $user_id, $status, $address) = @_;
+	$self->change_order_status_add_address($self->get_card_id($user_id), $status, $address);
     }
     
     sub delete_order_by_user_id {

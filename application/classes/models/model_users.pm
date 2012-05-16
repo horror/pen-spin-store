@@ -73,6 +73,14 @@
         return $result;
     }
     
+    sub get_address {
+        my($self, $user_id) = @_;
+        my $row = $self->fw_database_handler->select_and_fetchrow_hashref(
+            'users', 'id', '*', {id => $user_id},
+        );
+        return $row->{adress};
+    }
+    
     sub get_users_count {
         my $self = shift;
         

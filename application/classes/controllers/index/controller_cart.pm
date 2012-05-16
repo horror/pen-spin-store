@@ -3,6 +3,7 @@ package controller_cart; {
     use folder_config;
     use strict;
     use model_orders;
+    use model_users;
     use auth;
     use 5.010;
     use utf8;
@@ -18,13 +19,21 @@ package controller_cart; {
         my $self = shift;
         
         $self->add_template_scripts([
-	    APP_JS_PATH . __DM . 'cart_grid.js'
+	    APP_JS_PATH . __DM . 'cart_grid.js',
+	    APP_JS_PATH . __DM . 'address_dialog.js',
 	]);
-        
+	
+        my $auth = auth->new($self->cookies(), $self->database_handler());
+	my $address = model_users
+		->new($self->database_handler(), $self->lang())
+		->get_address($auth->logged_authorized_user_id());
+		
         $self->add_template_params({
             page_title => $self->lang->CART_PAGE_TITLE,
             center_block => [
-                fw_view->new('index', 'cart_show.tpl')->execute()
+                fw_view->new('index', 'cart_show.tpl', {
+		    address => $address,
+		})->execute()
             ]
         });
     }
@@ -36,7 +45,7 @@ package controller_cart; {
 	if (my $user_id = $auth->logged_authorized_user_id()) {
 	     model_orders
 		->new($self->database_handler(), $self->lang())
-		->change_order_status_by_user_id($user_id, 1);
+		->change_order_status_add_address_by_user_id($user_id, 1, $self->request->{address});
 	    $self->add_template_params({
 		page_title => $self->lang->CART_PAGE_TITLE,
 		center_block => [

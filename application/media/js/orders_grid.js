@@ -3,7 +3,7 @@
    	url: 'index.pl?controller=json_orders&action=get_orders',
 	editurl: 'index.pl?controller=json_orders&action=set',
 	datatype: "json",
-   	colNames: ['ID', 'Логин', 'Количество товаров', 'Общая стоимость', 'Статус заказа'],
+   	colNames: ['ID', 'Логин', 'Количество товаров', 'Общая стоимость', 'Статус заказа', 'Адресс'],
    	colModel: [
 	        {name:'id',index:'id', align:"left", editable:false},
 		{name:'login',index:'login', align:"left", editable:false},
@@ -12,6 +12,7 @@
    		{name:'status',index:'status', align:"left", editable:true,
 		    formatter: statusFormatter, editable:true, edittype:"select",
 		    editoptions:{value:"2:Обработан;1:Необработан;0:Незавершен"}},
+		{name:'address',index:'address', align:"left", editable:false},
    	],
    	rowNum:10,
    	rowList:[10, 20, 30],
@@ -40,6 +41,7 @@
 			{name:'name',index:'name',align:"left", editable:false, formatter: nameFormatter},
 			{name:'products_count',index:'products_count', align:"left", editable:true, editrules:{required:true}, editoptions:{size:10}},
 			{name:'price_per_one',index:'price_per_one', align:"left", editable:false},
+			
 		],
 		autowidth: true,
 		rownumbers: true,
