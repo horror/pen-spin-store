@@ -77,6 +77,8 @@ function make_map(orders) {
     var old_id = -1;
     var collection_idx = -1;
     
+    orders.rows.sort(function(a, b){return a.cell[ID_COL] - b.cell[ID_COL]});
+    
     for (var i = 0; i < orders.rows.length; ++i) {
 	var row = orders.rows[i].cell;
 	if (row[COORDS_COL] != null) {
