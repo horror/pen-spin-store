@@ -105,7 +105,6 @@ label {
     background-color: transparent;
 }
 
-
 time {
     color: gray;
     font-size: 10px;
@@ -239,4 +238,12 @@ time {
 
 #sub_menu a{
     color: #004352;
+}
+
+#orders_map {
+    clear: both;
+
+    margin-top: 10px;
+    width: 100%;
+    height: 400px;
 }

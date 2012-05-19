@@ -3755,6 +3755,7 @@ $.jgrid.extend({
 								url: surl,
 								dataType: "html",
 								success: function(res,status) {
+									
 									if(soptions.buildSelect !== undefined) {
 										var d = soptions.buildSelect(res);
 										if (d) { $(self).append(d); }
@@ -5660,6 +5661,7 @@ $.extend($.jgrid,{
 						dataType: "html",
 						context: {elem:elem, options:options, vl:vl},
 						success: function(data,status){
+						
 							var a,	ovm = [], elem = this.elem, vl = this.vl,
 							options = $.extend({},this.options),
 							msl = options.multiple===true;

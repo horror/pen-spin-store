@@ -4,6 +4,8 @@ package controller_cart; {
     use strict;
     use model_orders;
     use model_users;
+    use LWP::Simple;
+    use JSON;
     use auth;
     use 5.010;
     use utf8;
@@ -43,9 +45,14 @@ package controller_cart; {
     
         my $auth = auth->new($self->cookies(), $self->database_handler());
 	if (my $user_id = $auth->logged_authorized_user_id()) {
-	     model_orders
+	    my $api_key = "AE-AsU8BAAAAJ2-PTAIAL4mkD8sCL_3wS4Terydzh1QrmhYAAAAAAAAAAAA5QVhXwt7KRqskzuJAn_m-kz7SJQ==";
+	    my $geocode_url = sprintf("http://geocode-maps.yandex.ru/1.x/?format=json&geocode=%s&key=$api_key", $self->request->{address});
+	    my $geocode_response = JSON->new->utf8->decode(get($geocode_url));
+	    my $geogr_coords = $geocode_response->{response}->{GeoObjectCollection}
+		->{featureMember}->[0]->{GeoObject}->{Point}->{pos};
+	    model_orders
 		->new($self->database_handler(), $self->lang())
-		->change_order_status_add_address_by_user_id($user_id, 1, $self->request->{address});
+		->change_order_status_add_address_coords_by_user_id($user_id, 1, $self->request->{address}, $geogr_coords);
 	    $self->add_template_params({
 		page_title => $self->lang->CART_PAGE_TITLE,
 		center_block => [

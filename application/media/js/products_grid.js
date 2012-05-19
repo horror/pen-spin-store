@@ -111,7 +111,7 @@ function cartFormatter(cellValue, opts, rowObject) {
         "<label for='p_cnt'>Количество</label><input id='p_cnt' name='product_count' type='number' min='1' value='1'/>" +
 	"<input type='hidden' name='product_id' value='" + rowObject[0] + "'>" +
 	"<input type='hidden' name='product_price' value='" + rowObject[4] + "'>" +
-	"<input type='hidden' name='oper' value='add'>" +
+	"<input type='hidden' name='oper' value='add'> <br />" +
 	"<input type='submit' value='в корзину'>" +
 	"<br /><a class='comparison' id='product_id_" + rowObject[0] + "' >Добавить к сравнению</a>" +
 	"</form>";

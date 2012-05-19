@@ -1,5 +1,12 @@
 ﻿function gen_table() { 
     jQuery("#orders_grid").jqGrid({
+	ajaxGridOptions:   
+	    {dataFilter:    
+		function(data, dataType){  
+		    make_map(jQuery.parseJSON(data));      //orders_map.js
+		    return data;
+		}
+	    },
    	url: 'index.pl?controller=json_orders&action=get_orders',
 	editurl: 'index.pl?controller=json_orders&action=set',
 	datatype: "json",
