@@ -23,11 +23,26 @@ function create_map() {
 	.add(new ymaps.control.MiniMap({
 	    type: 'yandex#publicMap'
 	}));
+    
+    var myBalloonLayout = ymaps.templateLayoutFactory.createClass(
+                '<h3>Заказ ID - $[properties.id]</h3>' +
+		'<p><strong>Адресс:</strong> $[properties.address]<br />' +
+		'<strong>Количество единиц:</strong> $[properties.cnt]<br />' +
+		'<strong>Общая стоимость:</strong> $[properties.total]<br /></p>' +
+                '<small><strong>Статус заказа -</strong> $[properties.status]</small>'
+    );
+    
+    ymaps.layout.storage.add('my#superlayout', myBalloonLayout);
 }
 
 function make_map(orders) {
     const COORDS_COL = 6;
     const USER_COL = 1;
+    const ID_COL = 0;
+    const PROD_CNT_COL = 2;
+    const TOTAL_COL = 3;
+    const STATUS_COL = 4;
+    const ADRRESS_COL = 5;
     
     var icon_colors = [
     	'twirl#blueStretchyIcon',
@@ -62,21 +77,24 @@ function make_map(orders) {
     var old_id = -1;
     var collection_idx = -1;
     
-    for (var i = 0; i < orders.rows.length; ++i)
-	if (orders.rows[i].cell[COORDS_COL] != null) {
+    for (var i = 0; i < orders.rows.length; ++i) {
+	var row = orders.rows[i].cell;
+	if (row[COORDS_COL] != null) {
 	
-	    if(orders.rows[i].cell[USER_COL] != old_id) {
-		old_id = orders.rows[i].cell[USER_COL];		
+	    if(row[USER_COL] != old_id) {
+		old_id = row[USER_COL];		
 		collection_idx++;
 		point_collections[collection_idx] = new ymaps.GeoObjectCollection({}, {
                     preset: icon_colors[collection_idx % icon_colors.length],
                     geoObjectCursor: 'point',
-                    balloonCloseButton: true
+                    balloonCloseButton: true,
+		    balloonContentBodyLayout:'my#superlayout',
+		    balloonMaxWidth: 300
                 });
 
 	    }
 	    
-	    var coords = orders.rows[i].cell[COORDS_COL].parse_point();
+	    var coords = row[COORDS_COL].parse_point();
 	   
 	    for (var j = 0; j < 2; ++j) {                      
 		if (coords[j] < left_top_bound[j])              // Установка границ
@@ -86,13 +104,20 @@ function make_map(orders) {
 	    }
 	    
 	    
-	    placemark = new ymaps.Placemark(coords, {
-		iconContent: orders.rows[i].cell[USER_COL],
+	    placemark = new ymaps.Placemark(coords,
+	    {
+		id: row[ID_COL],
+		address: row[ADRRESS_COL],
+		cnt: row[PROD_CNT_COL],
+		total: row[TOTAL_COL],
+		status: row[STATUS_COL],
+		iconContent: row[USER_COL]
             });
 	    
 	    point_collections[collection_idx].add(placemark);
 	}
-	    
+    }
+    
     for(var i = 0; i < point_collections.length; ++i)
 	orders_map.geoObjects.add(point_collections[i]);
       
