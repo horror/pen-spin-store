@@ -14,6 +14,7 @@ package controller_admin_orders; {
         my $self = shift;
         
         $self->add_template_scripts([
+            APP_JS_PATH . __DM . 'orders_map.js',
             APP_JS_PATH . __DM . 'orders_grid.js',
             APP_JS_PATH . __DM . 'orders_admin_pager.js',
         ]);

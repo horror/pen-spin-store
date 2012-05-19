@@ -1,4 +1,5 @@
 var orders_map;
+var point_collections  = [];
 
 String.prototype.parse_point = function () {
     var coords = this.match(/(-?\d+\.\d*)\s(-?\d+\.\d*)/);
@@ -26,44 +27,80 @@ function create_map() {
 
 function make_map(orders) {
     const COORDS_COL = 6;
+    const USER_COL = 1;
     
+    var icon_colors = [
+    	'twirl#blueStretchyIcon',
+	'twirl#darkblueStretchyIcon',
+	'twirl#darkgreenStretchyIcon',
+	'twirl#darkorangeStretchyIcon',
+	'twirl#greenStretchyIcon',
+	'twirl#greyStretchyIcon',
+	'twirl#lightblueStretchyIcon',
+	'twirl#nightStretchyIcon',
+	'twirl#orangeStretchyIcon',
+	'twirl#pinkStretchyIcon',
+	'twirl#redStretchyIcon',
+	'twirl#violetStretchyIcon',
+	'twirl#whiteStretchyIcon',
+	'twirl#yellowStretchyIcon',
+	'twirl#brownStretchyIcon',
+	'twirl#blackStretchyIcon'
+    ]
     if (!orders_map)
         create_map();
 	
     console.info(orders);
-    point_collection = new ymaps.GeoObjectCollection();
+    
+    for(var i = 0; i < point_collections.length; ++i)
+	point_collections[i].removeAll();
+    
+    point_collections.splice(0, point_collections.length);
     
     var left_top_bound = [100000, 100000], right_bottom_bound = [-100000, -100000];
     
+    var old_id = -1;
+    var collection_idx = -1;
+    
     for (var i = 0; i < orders.rows.length; ++i)
 	if (orders.rows[i].cell[COORDS_COL] != null) {
+	
+	    if(orders.rows[i].cell[USER_COL] != old_id) {
+		old_id = orders.rows[i].cell[USER_COL];		
+		collection_idx++;
+		point_collections[collection_idx] = new ymaps.GeoObjectCollection({}, {
+                    preset: icon_colors[collection_idx % icon_colors.length],
+                    geoObjectCursor: 'point',
+                    balloonCloseButton: true
+                });
+
+	    }
+	    
 	    var coords = orders.rows[i].cell[COORDS_COL].parse_point();
 	   
 	    for (var j = 0; j < 2; ++j) {                      
-		if (coords[j] < left_top_bound[j])              // Установка границ
-		    left_top_bound[j] = coords[j];		// viewport карты
+		if (coords[j] < left_top_bound[j])              // РЈСЃС‚Р°РЅРѕРІРєР° РіСЂР°РЅРёС†
+		    left_top_bound[j] = coords[j];		// viewport РєР°СЂС‚С‹
 		if (coords[j] > right_bottom_bound[j])		
 		    right_bottom_bound[j] = coords[j];		
 	    }
 	    
 	    
-	    placemark = new ymaps.Placemark(coords);
-	    point_collection.add(placemark);
+	    placemark = new ymaps.Placemark(coords, {
+		iconContent: orders.rows[i].cell[USER_COL],
+            });
+	    
+	    point_collections[collection_idx].add(placemark);
 	}
 	    
-    orders_map.geoObjects.add(point_collection);
+    for(var i = 0; i < point_collections.length; ++i)
+	orders_map.geoObjects.add(point_collections[i]);
       
-              
-    left_top_bound[0] -= 9;		//расширение высоты viewport 
-    right_bottom_bound[0] += 9;
+    console.info(left_top_bound);
+    console.info(right_bottom_bound);
     
     orders_map.setBounds([left_top_bound, right_bottom_bound], {
 	checkZoomRange: true,
-	precizeZoom: true,
-	callback: function(err) {
-	    if (err) {
-		alert("Не удалось показать заданный регион" + err);
-	    }
-    }
+	precizeZoom: true
 });
 }
