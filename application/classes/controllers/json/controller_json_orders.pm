@@ -24,11 +24,27 @@ package controller_json_orders; {
 	
 	my $start = $limit * $page - $limit;
 	
+	my $filters = {};
+	if ($self->request->{_search} eq 'true') {
+	    my $filters_cond = lc $self->request->{filters}->{groupOp};
+	    my $filter = {};
+	    
+	    foreach (@{$self->request->{filters}->{rules}}) {
+	        $filter->{$_->{field}} = $self->search_ops_sql_repr->{$_->{op}};
+		my ($key) = keys %{$filter->{$_->{field}}};
+		$filter->{$_->{field}}->{$key} = sprintf($filter->{$_->{field}}->{$key}, $_->{data});     
+	    }
+	    
+	    foreach my $key (keys %$filter) {
+	        push @{$filters->{"-$filters_cond"}}, {$key => $filter->{$key}};
+	    }
+	}
+	
 	$self->data->{rows} = ($self->user_is_admin()) ?
 	    model_orders->new($self->database_handler(), $self->lang())
-	        ->get_all_orders_jbgrid_format_calls($sidx, $sord, $limit, $start) :
+	        ->get_all_orders_jbgrid_format_calls($filters, { "-$sord" => $sidx }, $limit, $start) :
 	    model_orders->new($self->database_handler(), $self->lang())
-	        ->get_user_orders_jbgrid_format_calls($self->user_id(), $sidx, $sord, $limit, $start);
+	        ->get_user_orders_jbgrid_format_calls($self->user_id(), $filters, { "-$sord" => $sidx }, $limit, $start);
 	    
 	my $count = ($self->user_is_admin()) ?
 	    model_orders->new($self->database_handler(), $self->lang())

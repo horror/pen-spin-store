@@ -151,6 +151,11 @@ package fw_database; {
         my $sth = $self->database_handler->prepare("TRUNCATE $table_name");
         $sth->execute();
     }
+    
+    sub get_where {
+        my($self, $params, $order, $limit, $offset) = @_;
+        return $self->sql_gen_handler->where($params, $order, $limit, $offset);
+    }
 }
 
 1;

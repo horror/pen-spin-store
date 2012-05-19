@@ -4,7 +4,7 @@
 	{height: 'auto'}, // edit options
 	{}, // add options
 	{reloadAfterSubmit:true}, // del options
-	{} // search options
+	{multipleSearch:true, closeAfterSearch:true, width: 'auto'} // search options
 	);
     
 });

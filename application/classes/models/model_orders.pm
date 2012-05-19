@@ -65,31 +65,30 @@ package model_orders; {
     }
     
     sub get_orders_jbgrid_format_calls {
-        my($self, $user_id, $order_field, $order_direction, $limit, $start) = @_;
+        my($self, $user_id, $filter, $order, $limit, $start) = @_;
+	
+	@{$filter->{-and}} = (@{$filter->{-and}}, {user_id => $user_id}) if $user_id;
+	
+	my($stmt_w, @bind) = $self->fw_database_handler->get_where($filter, $order, $limit, $start);
 	
 	my $stmt = "SELECT o.id, u.login, o.products_cnt, o.total_price, o.status, o.address, o.geogr_coords
 	    FROM ps_orders o
-	    INNER JOIN ps_users u on o.user_id = u.id";
-	$stmt .= " WHERE user_id = ?" if $user_id;
-        $stmt .= " ORDER BY ? ? LIMIT ?, ?";
-	   
-	my $bind = [$order_field, $order_direction, $start, $limit];
-	    
-	unshift(@$bind, $user_id) if $user_id;
+	    INNER JOIN ps_users u on o.user_id = u.id
+	    $stmt_w";
 	
-        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid_without_abstract($stmt, $bind); 
+        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid_without_abstract($stmt, \@bind); 
     }
     
     sub get_all_orders_jbgrid_format_calls {
-        my($self, $order_field, $order_direction, $limit, $start) = @_;
+        my($self, $filter, $order, $limit, $start) = @_;
 	    
-	return $self->get_orders_jbgrid_format_calls(0, $order_field, $order_direction, $limit, $start);
+	return $self->get_orders_jbgrid_format_calls(0, $filter, $order, $limit, $start);
     }
     
     sub get_user_orders_jbgrid_format_calls {
-        my($self, $user_id, $order_field, $order_direction, $limit, $start) = @_;
+        my($self, $user_id, $filter, $order, $limit, $start) = @_;
 	    
-	return $self->get_orders_jbgrid_format_calls($user_id, $order_field, $order_direction, $limit, $start);
+	return $self->get_orders_jbgrid_format_calls($user_id, $filter, $order, $limit, $start);
     }
     
     sub add_cart_and_get_id {
