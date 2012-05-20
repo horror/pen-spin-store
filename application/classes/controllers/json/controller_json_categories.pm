@@ -14,15 +14,10 @@ package controller_json_categories; {
     
     sub action_get {
         my $self = shift;
-	my $page = $self->request->{'page'}; 
-	my $limit = $self->request->{'rows'};
-	my $sidx = $self->request->{'sidx'} unless $self->request->{'sidx'} =~ /\W/; 
-	my $sord = $self->request->{'sord'} unless $self->request->{'sord'} =~ /\W/;  
-	
-	my $start = $limit * $page - $limit;
+
 	$self->data->{rows} = model_products->new($self->database_handler(), $self->lang())->get_category_tree_jbgrid_format_calls();
 	
-	$self->set_grid_params(7, $limit, $page);
+	$self->set_grid_params(7);
     }
     
     sub action_set {

@@ -16,34 +16,17 @@
     sub action_get {
         my $self = shift;
         
-	my $page = $self->request->{'page'}; 
-	my $limit = $self->request->{'rows'};
-	my $sidx = $self->request->{'sidx'} unless $self->request->{'sidx'} =~ /\W/; 
-	my $sord = $self->request->{'sord'} unless $self->request->{'sord'} =~ /\W/;  
+	my $offset = $self->get_offset();
+	my $limit = $self->get_limit();
 	
-	my $start = $limit * $page - $limit;
-	
+	my $order = $self->get_order();
 	my $count;
 	
 	if ($self->request->{_search} eq 'true') {
-	    my $filters_cond = lc $self->request->{filters}->{groupOp};
-	    my $filter = {};
-	    
-	    foreach (@{$self->request->{filters}->{rules}}) {
-	        $filter->{$_->{field}} = $self->search_ops_sql_repr->{$_->{op}};
-		my ($key) = keys %{$filter->{$_->{field}}};
-		$filter->{$_->{field}}->{$key} = sprintf($filter->{$_->{field}}->{$key}, $_->{data});     
-	    }
-	    
-	    my $filters = {};
-	    foreach my $key (keys %$filter) {
-	        push @{$filters->{"-$filters_cond"}}, {$key => $filter->{$key}};
-	    }
+	    my $filters = $self->get_filters();
 	    
 	    $self->data->{rows} = model_products->new($self->database_handler(), $self->lang())
-		->get_products(
-		    $filters, { "-$sord" => $sidx }, $limit, $start
-		);
+		->get_products($filters, $order, $limit, $offset);
 		
 	    $count = model_products->new($self->database_handler(), $self->lang())
 		->get_products_cnt($filters);
@@ -51,7 +34,7 @@
 	else {
 	    $self->data->{rows} = model_products->new($self->database_handler(), $self->lang())
 		->get_products_by_category_id(
-		    $self->request->{'cat_id'}, $sord, $sidx, $limit, $start
+		    $self->request->{'cat_id'}, $order, $limit, $offset
 		);
 		
 	    $count = model_products->new($self->database_handler(), $self->lang())
@@ -59,7 +42,7 @@
 	}
 	
 	
-	$self->set_grid_params($count, $limit, $page);
+	$self->set_grid_params($count);
     }
    
     sub action_set {

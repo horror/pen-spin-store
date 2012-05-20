@@ -33,11 +33,17 @@ package model_products; {
     }
     
     sub get_products_by_category_id {
-        my($self, $category_id, $order_direction, $order_field, $limit, $start) = @_;
-        my $stmt = "SELECT id, image, name, description, price FROM ps_products WHERE
-           path like concat((SELECT path FROM ps_categories WHERE id = ?), '%')
-           ORDER BY $order_field $order_direction LIMIT $start, $limit";
-        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid_without_abstract($stmt, [$category_id]);   
+        my($self, $category_id, $order, $limit, $start) = @_;
+        
+        my $filter = {
+            path => { '-like' => \["concat((SELECT path FROM ps_categories WHERE id = ?), '%')", $category_id] }
+        };
+        
+        my($stmt_w, @bind) = $self->fw_database_handler->get_where($filter, $order, $limit, $start);
+        
+        my $stmt = "SELECT id, image, name, description, price FROM ps_products
+           $stmt_w";
+        return $self->fw_database_handler->select_and_fetchall_array_for_jsGrid_without_abstract($stmt, \@bind);   
     }
     
     sub get_products {

@@ -20,18 +20,16 @@ package controller_json_users; {
 	    return;
 	}
         
-	my $page = $self->request->{'page'}; 
-	my $limit = $self->request->{'rows'};
-	my $sidx = $self->request->{'sidx'} unless $self->request->{'sidx'} =~ /\W/; 
-	my $sord = $self->request->{'sord'} unless $self->request->{'sord'} =~ /\W/;  
-	
-	my $start = $limit * $page - $limit;
+	my $offset = $self->get_offset();
+	my $limit = $self->get_limit();
+	my $order = $self->get_order();
 	
 	$self->data->{rows} = model_users->new($self->database_handler(), $self->lang())
-	    ->get_users_jbgrid_format_calls({ "-$sord" => $sidx }, $limit, $start);
+	    ->get_users_jbgrid_format_calls($order, $limit, $offset);
+	    
 	my $count = model_users->new($self->database_handler(), $self->lang())->get_users_count();
 	
-	$self->set_grid_params($count, $limit, $page);
+	$self->set_grid_params($count);
     }
 
     sub action_set {

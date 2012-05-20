@@ -16,35 +16,17 @@ package controller_json_orders; {
     
     sub action_get_orders {
         my $self = shift;
-        
-	my $page = $self->request->{'page'}; 
-	my $limit = $self->request->{'rows'};
-	my $sidx = $self->request->{'sidx'} unless $self->request->{'sidx'} =~ /\W/; 
-	my $sord = $self->request->{'sord'} unless $self->request->{'sord'} =~ /\W/;  
 	
-	my $start = $limit * $page - $limit;
-	
-	my $filters = {};
-	if ($self->request->{_search} eq 'true') {
-	    my $filters_cond = lc $self->request->{filters}->{groupOp};
-	    my $filter = {};
-	    
-	    foreach (@{$self->request->{filters}->{rules}}) {
-	        $filter->{$_->{field}} = $self->search_ops_sql_repr->{$_->{op}};
-		my ($key) = keys %{$filter->{$_->{field}}};
-		$filter->{$_->{field}}->{$key} = sprintf($filter->{$_->{field}}->{$key}, $_->{data});     
-	    }
-	    
-	    foreach my $key (keys %$filter) {
-	        push @{$filters->{"-$filters_cond"}}, {$key => $filter->{$key}};
-	    }
-	}
+	my $offset = $self->get_offset();
+	my $limit = $self->get_limit();
+	my $filters = $self->get_filters();
+	my $order = $self->get_order();
 	
 	$self->data->{rows} = ($self->user_is_admin()) ?
 	    model_orders->new($self->database_handler(), $self->lang())
-	        ->get_all_orders_jbgrid_format_calls($filters, { "-$sord" => $sidx }, $limit, $start) :
+	        ->get_all_orders_jbgrid_format_calls($filters, $order, $limit, $offset) :
 	    model_orders->new($self->database_handler(), $self->lang())
-	        ->get_user_orders_jbgrid_format_calls($self->user_id(), $filters, { "-$sord" => $sidx }, $limit, $start);
+	        ->get_user_orders_jbgrid_format_calls($self->user_id(), $filters, $order, $limit, $offset);
 	    
 	my $count = ($self->user_is_admin()) ?
 	    model_orders->new($self->database_handler(), $self->lang())
@@ -52,29 +34,25 @@ package controller_json_orders; {
 	    model_orders->new($self->database_handler(), $self->lang())
 	        ->get_user_orders_count($self->user_id());
 	
-	$self->set_grid_params($count, $limit, $page);
+	$self->set_grid_params($count);
     }
     
     sub action_get_order_items {
         my $self = shift;
         
-	my $page = $self->request->{'page'}; 
-	my $limit = $self->request->{'rows'};
-	my $sidx = $self->request->{'sidx'} unless $self->request->{'sidx'} =~ /\W/; 
-	my $sord = $self->request->{'sord'} unless $self->request->{'sord'} =~ /\W/;  
-	
-	my $start = $limit * $page - $limit;
+	my $offset = $self->get_offset();
+	my $limit = $self->get_limit();
+	my $order = $self->get_order(); 
 	
 	my $user_id = auth->new($self->cookies(), $self->database_handler())
 	    ->logged_user_id();
 	
 	$self->data->{rows} = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_order_items_jbgrid_format_calls($self->request->{'id'}, $sord, $sidx, $limit, $start);
+	    ->get_order_items_jbgrid_format_calls($self->request->{'id'}, $order, $limit, $offset);
 	    
 	my $count = model_orders->new($self->database_handler(), $self->lang())
 	    ->get_order_items_count($self->request->{'id'});
-	
-	$self->set_grid_params($count, $limit, $page);
+	$self->set_grid_params($count);
     }
 
     sub action_set {

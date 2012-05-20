@@ -16,25 +16,22 @@ package controller_json_cart; {
     }
     
     sub action_get {
-        my $self = shift;
-        
-	my $page = $self->request->{'page'}; 
-	my $limit = $self->request->{'rows'};
-	my $sidx = $self->request->{'sidx'} unless $self->request->{'sidx'} =~ /\W/; 
-	my $sord = $self->request->{'sord'} unless $self->request->{'sord'} =~ /\W/;  
+        my $self = shift;  
 	
-	my $start = $limit * $page - $limit;
+	my $limit = $self->get_limit();
+	my $offset = $self->get_offset();
+	my $order = $self->get_order();
 	
 	my $user_id = auth->new($self->cookies(), $self->database_handler())
 	    ->logged_user_id();
 	
 	$self->data->{rows} = model_orders->new($self->database_handler(), $self->lang())
-	    ->get_order_items_jbgrid_format_calls_by_user_id($user_id, $sord, $sidx, $limit, $start);
+	    ->get_order_items_jbgrid_format_calls_by_user_id($user_id, $order, $limit, $offset);
 	    
 	my $count = model_orders->new($self->database_handler(), $self->lang())
 	    ->get_order_items_count_by_user_id($user_id);
 	
-	$self->set_grid_params($count, $limit, $page);
+	$self->set_grid_params($count);
     }
 
     sub action_set {

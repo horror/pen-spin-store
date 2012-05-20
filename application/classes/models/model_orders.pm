@@ -199,20 +199,19 @@ package model_orders; {
     }
     
     sub get_order_items_jbgrid_format_calls {
-        my($self, $order_id, $order_direction, $order_field, $limit, $start) = @_;
+        my($self, $order_id, $order, $limit, $start) = @_;
+	
+	my($stmt_w, @bind) = $self->fw_database_handler->get_where({order_id => $order_id}, $order, $limit, $start);
 	
         my $stmt = "SELECT o.id, o.product_id, p.image, p.name, o.products_count, o.price_per_one
 	    FROM ps_orders_products_href o
 	    INNER JOIN ps_products p on o.product_id = p.id
-	    WHERE order_id = ?
-            ORDER BY ? ? LIMIT ?, ?";
-	   
-	my $bind = [$order_id, $order_field, $order_direction, $start, $limit];
+	    $stmt_w";
 	
         return $self->fw_database_handler
 	    ->select_and_fetchall_array_for_jsGrid_without_abstract(
 	        $stmt,
-		$bind
+		\@bind
 	    );   
     }
     
@@ -246,10 +245,9 @@ package model_orders; {
     }
     
     sub get_order_items_jbgrid_format_calls_by_user_id {
-        my($self, $user_id, $order_direction, $order_field, $limit, $start) = @_;
+        my($self, $user_id, $order, $limit, $start) = @_;
 	return $self->get_order_items_jbgrid_format_calls(
-	    $self->get_card_id($user_id), $order_direction,
-	    $order_field, $limit, $start
+	    $self->get_card_id($user_id), $order, $limit, $start
 	);
     }
     
